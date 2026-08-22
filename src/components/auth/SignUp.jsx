@@ -22,6 +22,7 @@ export default function SignUp(){
           const user = userCredential.user;
         }).then(() => {
             navigate("/app")
+            console.log("Did it!")
         })
         .catch((error) => {
           console.log(error.message)
@@ -36,8 +37,8 @@ export default function SignUp(){
         <>
         <div className="flex flex-col justify-center items-center gap-8 px-10 py-6 min-h-dvh">  
             <div className=" flex flex-col gap-2 text-center">
-                <h1 className="text-3xl">Create Account</h1>
-                <p className="text-md">Join the fourth wall.</p>
+                <h1 className="text-4xl">CREATE AN ACCOUNT</h1>
+                <p className="text-md">YOUR SIDE OF THE FOURTH WALL</p>
             </div>
 
             <form onSubmit={createNewUser} action="" className="flex flex-col gap-4 w-full">
@@ -57,12 +58,15 @@ export default function SignUp(){
                     <label className="block" htmlFor="newPassword">PASSWORD</label>
                     <input type="password" id="newPassword" name="newPassword" className="pl-[5px] h-[40px] w-full bg-[var(--surface)]  border border-white/5 border-b-white/15 shadow-[var(--shadow-input)]" />
                 </div>
+
+                <div className="mt-4 flex flex-col gap-2 w-full">
+                    <button type="submit" className="mx-auto h-[50px] w-full max-w-[400px] bg-[var(--accent-dark)] rounded-xl hover:bg-[var(--accent-dark)]/80 active:bg-[var(--accent-dark)]/80 active:scale-95 transition-all duration-200 cursor-pointer">Create Account</button>
+                    <p className="text-xs text-center">Already have an account? <span>Log in</span></p>
+                 </div>
+
             </form>
             
-            <div className="flex flex-col gap-2 w-full">
-                <button type="submit" className="mx-auto h-[50px] w-full max-w-[400px] bg-[var(--accent-dark)] rounded-xl">Create Account</button>
-                <p className="text-xs text-center">Already have an account? <span>Log in</span></p>
-            </div>
+
         </div>
         </>
     )
