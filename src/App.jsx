@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router";
+import { getAPI } from "./services/tmdb.js";
 
 import SignUp from "./components/auth/SignUp";
 import LogIn from "./components/auth/LogIn";
