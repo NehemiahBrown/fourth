@@ -42,7 +42,10 @@ body {
 
 @media (hover: hover) and (pointer: fine) {
   .carouselArrow {
-    display: flex;
     align-items: center;
+  }
+  .carouselArrow:hover{
+    opacity: 100;
+
   }
 }
