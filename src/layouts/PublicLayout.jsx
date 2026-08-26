@@ -5,7 +5,7 @@ import PublicFooter from "../components/layout/PublicFooter";
 
 export default function PublicLayout() {
   return (
-    <div className="w-full mx-auto max-w-lg">
+    <div className="w-full mx-auto max-w-4xl">
       <PublicHeader />
 
       <Outlet />

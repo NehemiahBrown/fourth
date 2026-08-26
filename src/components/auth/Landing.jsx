@@ -1,4 +1,4 @@
-import FourthLogo from "../../assets/fourthlogo.png";
+import FourthLogo from "../../assets/fourthlogovert.png";
 import { NavLink } from "react-router";
 
 export default function Landing() {

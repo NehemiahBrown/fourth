@@ -5,7 +5,7 @@ import MainFooter from "../components/layout/MainFooter";
 
 export default function RootLayout() {
   return (
-    <div className="w-full mx-auto max-w-lg">
+    <div className="w-full mx-auto max-w-4xl">
       <MainHeader />
 
       <Outlet />
