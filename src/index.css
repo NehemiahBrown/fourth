@@ -44,8 +44,7 @@ body {
   .carouselArrow {
     align-items: center;
   }
-  .carouselArrow:hover{
+  .carouselArrow:hover {
     opacity: 100;
-
   }
 }
