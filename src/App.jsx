@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import { auth } from "./services/firebase.js";
-import { getAPI } from "./services/tmdb.js";
-
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { AuthRequired } from "./layouts/AuthRequired.jsx";
 import SignUp from "./components/auth/SignUp";
 import LogIn from "./components/auth/LogIn";
 import Landing from "./components/auth/Landing";
@@ -14,16 +13,20 @@ import Home from "./components/common/Home";
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<Landing />} />
-          <Route path="signup" element={<SignUp />} />
-          <Route path="login" element={<LogIn />} />
-        </Route>
-        <Route element={<RootLayout />}>
-          <Route path="/app" element={<Home />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Landing />} />
+            <Route path="signup" element={<SignUp />} />
+            <Route path="login" element={<LogIn />} />
+          </Route>
+          <Route element={<AuthRequired />}>
+            <Route element={<RootLayout />}>
+              <Route path="/app" element={<Home />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

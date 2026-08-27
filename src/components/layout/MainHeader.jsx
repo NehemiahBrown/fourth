@@ -1,5 +1,5 @@
-import { signOut } from "firebase/auth";
 import { auth } from "../../services/firebase.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
@@ -11,6 +11,7 @@ export default function MainHeader() {
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const dropDownRef = useRef(null);
   const navigate = useNavigate();
+  const { logOut } = useAuth();
 
   function handleDropDown() {
     setDropDownOpen((current) => !current);
@@ -23,7 +24,7 @@ export default function MainHeader() {
   useClickOutside(dropDownRef, closeDropDown);
 
   function signUserOut() {
-    signOut(auth)
+    logOut()
       .then(() => {
         navigate("/");
       })

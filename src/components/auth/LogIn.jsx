@@ -1,11 +1,11 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../services/firebase.js";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function LogIn() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
+  const { logIn } = useAuth();
 
   async function signUserIn(e) {
     e.preventDefault();
@@ -14,9 +14,8 @@ export default function LogIn() {
     const userEmail = e.target.userEmail.value;
     const userPassword = e.target.userPassword.value;
     try {
-      await signInWithEmailAndPassword(auth, userEmail, userPassword)
-        .then((userCredential) => {
-          const user = userCredential.user;
+      await logIn(userEmail, userPassword)
+        .then(() => {
           console.log("logged in");
           navigate("/app");
         })
