@@ -1,5 +1,7 @@
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase.js";
+import { createUserDocument } from "../../services/firestore.js";
+
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -13,13 +15,21 @@ export default function SignUp() {
 
     let email = e.target.newEmail.value;
     let password = e.target.newPassword.value;
-    let fullname = e.target.newName.value;
-    let username = e.target.newUsername.value;
+    let fullName = e.target.newName.value;
+    let userName = e.target.newUsername.value;
+
+    const userData = {
+      fullName,
+      userName,
+      email,
+  }
+  console.log("Use data:", userData)
 
     try {
       await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
+          createUserDocument(user.uid, userData)
         })
         .then(() => {
           navigate("/app");
