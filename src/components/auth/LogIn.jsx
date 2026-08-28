@@ -16,7 +16,6 @@ export default function LogIn() {
     try {
       await logIn(userEmail, userPassword)
         .then(() => {
-          console.log("logged in");
           navigate("/app");
         })
         .catch((error) => {
@@ -37,7 +36,7 @@ export default function LogIn() {
         <form
           onSubmit={signUserIn}
           action=""
-          className="flex flex-col gap-4 w-full"
+          className="flex flex-col gap-4 w-full max-w-[400px]"
         >
           <div className="flex flex-col gap-1">
             <label className="block" htmlFor="userEmail">

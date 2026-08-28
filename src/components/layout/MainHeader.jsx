@@ -1,6 +1,4 @@
-import { auth } from "../../services/firebase.js";
 import { useAuth } from "../../context/AuthContext.jsx";
-
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 
@@ -11,7 +9,7 @@ export default function MainHeader() {
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const dropDownRef = useRef(null);
   const navigate = useNavigate();
-  const { logOut } = useAuth();
+  const { logOut, currentUser, userProfile } = useAuth();
 
   function handleDropDown() {
     setDropDownOpen((current) => !current);
@@ -44,11 +42,7 @@ export default function MainHeader() {
         className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] px-2 py-2 rounded-full cursor-pointer"
       >
         <button onClick={handleDropDown}>
-          <img
-            src={FourthIcon}
-            alt="User's account information."
-            className="w-[2rem] h-[2rem] cursor-pointer"
-          />
+          <p>{userProfile.fullName}</p>
         </button>
         {dropDownOpen && (
           <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-14 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-[500px] z-20000 rounded-lg">

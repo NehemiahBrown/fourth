@@ -22,14 +22,13 @@ export default function SignUp() {
       fullName,
       userName,
       email,
-  }
-  console.log("Use data:", userData)
+    };
 
     try {
       await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          createUserDocument(user.uid, userData)
+          createUserDocument(user.uid, userData);
         })
         .then(() => {
           navigate("/app");
@@ -53,7 +52,7 @@ export default function SignUp() {
         <form
           onSubmit={createNewUser}
           action=""
-          className="flex flex-col gap-4 w-full"
+          className="flex flex-col gap-4 w-full max-w-[400px]"
         >
           <div className="flex flex-col gap-1">
             <label className="block" htmlFor="newName">

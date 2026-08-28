@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { createContext, useState, useContext, useEffect } from "react";
 import { auth } from "../services/firebase.js";
+import { getUserDocument } from "../services/firestore.js";
 
 export const AuthContext = createContext();
 
@@ -15,11 +16,14 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
 
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
   function logOut() {
+    setCurrentUser(null);
+    setUserProfile(null);
     return signOut(auth);
   }
   function signUp(email, password) {
@@ -27,9 +31,11 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
+        const userDocumentData = await getUserDocument(user.uid);
+        setUserProfile(userDocumentData);
       } else {
         setCurrentUser(null);
       }
@@ -39,6 +45,7 @@ export function AuthProvider({ children }) {
 
   const userData = {
     currentUser,
+    userProfile,
     logIn,
     logOut,
     signUp,

@@ -1,14 +1,20 @@
-import { db } from "./firebase.js"
-import { doc, setDoc, serverTimestamp } from "firebase/firestore"; 
+import { db } from "./firebase.js";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 
-
-
-export async function createUserDocument(uid, userData){
-    console.log("UID received:", uid);
-    console.log("User data received:", userData);
-await setDoc(doc(db, "users", uid), {
+export async function createUserDocument(uid, userData) {
+  await setDoc(doc(db, "users", uid), {
     ...userData,
-    createdAt: serverTimestamp()
+    createdAt: serverTimestamp(),
   });
-  console.log()
+}
+
+export async function getUserDocument(uid) {
+  const userDocRef = doc(db, "users", uid);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (userDocSnap.exists()) {
+    return userDocSnap.data();
+  } else {
+    console.log("No such document!");
+  }
 }
