@@ -35,3 +35,8 @@ export async function getTrendingMovies() {
   });
   return trendingMoviesObject;
 }
+
+export async function getMovieDetails(movieId) {
+  const movie = await getAPI(`/movie/${movieId}?language=en-US`);
+  return;
+}

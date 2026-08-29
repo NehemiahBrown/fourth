@@ -1,5 +1,6 @@
 import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router";
 
 import { getTrendingMovies } from "../../services/tmdb.js";
 
@@ -8,6 +9,7 @@ export default function Home() {
   const [recentlyWatched, setRecentlyWatched] = useState([]);
 
   const carouselRef = useRef(null);
+  const navigate = useNavigate();
 
   //   Get trending movie data
   useEffect(() => {
@@ -38,7 +40,6 @@ export default function Home() {
       });
     }
   }
-  console.log(trendingMovies);
 
   return (
     <main className="px-4 min-h-dvh">
@@ -80,6 +81,7 @@ export default function Home() {
                 return (
                   <div key={movie.id} className="shrink-0 snap-start">
                     <img
+                      onClick={() => navigate(`/movie/${movie.id}`)}
                       src={movie.poster}
                       alt={movie.title}
                       className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] border border-white/15 object-cover"

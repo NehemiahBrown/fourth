@@ -15,7 +15,9 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
+  // holds firebase user authentication data
   const [currentUser, setCurrentUser] = useState(null);
+  // holds custom user profile data from firestore
   const [userProfile, setUserProfile] = useState(null);
 
   function logIn(email, password) {
