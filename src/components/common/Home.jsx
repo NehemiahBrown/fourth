@@ -84,7 +84,7 @@ export default function Home() {
                       onClick={() => navigate(`/movie/${movie.id}`)}
                       src={movie.poster}
                       alt={movie.title}
-                      className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] border border-white/15 object-cover"
+                      className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"
                     />
                   </div>
                 );

@@ -24,7 +24,7 @@ export async function getTrendingMovies() {
   const trendingMoviesObject = movies.results.map((movie) => {
     return {
       id: movie.id,
-      backdrop: movie.backdrop_path,
+      backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
       poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
       title: movie.title,
       overview: movie.overview,
@@ -37,6 +37,34 @@ export async function getTrendingMovies() {
 }
 
 export async function getMovieDetails(movieId) {
-  const movie = await getAPI(`/movie/${movieId}?language=en-US`);
-  return;
+  const movie = await getAPI(`/movie/${movieId}?language=en-US&append_to_response=credits`);
+  const date = new Date(movie.release_date);
+  const year = date.getFullYear();
+
+  const movieDetailedData =  {
+      id: movie.id,
+      title: movie.title,
+      overview: movie.overview,
+      backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`, 
+      poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      genres: movie.genres.map((movieGenre) => {
+        return (
+          movieGenre.name
+        )
+      }).slice(0, 3),
+      cast: movie.credits.cast.map((castMember) => {
+        return ({
+          character: castMember.character, 
+          castName: castMember.name
+        })
+      }).slice(0, 20),
+      country: movie.origin_country,
+      language: movie.original_language,
+      releaseYear: year,
+      releaseDate: movie.release_date,
+      runtime: movie.runtime,
+      voteAverage: movie.vote_average,
+      voteCount: movie.vote_count,
+    } 
+    return movieDetailedData;
 }

@@ -19,6 +19,7 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   // holds custom user profile data from firestore
   const [userProfile, setUserProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true)
 
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
@@ -38,6 +39,7 @@ export function AuthProvider({ children }) {
         setCurrentUser(user);
         const userDocumentData = await getUserDocument(user.uid);
         setUserProfile(userDocumentData);
+        setIsLoading(false);
       } else {
         setCurrentUser(null);
       }
@@ -51,6 +53,7 @@ export function AuthProvider({ children }) {
     logIn,
     logOut,
     signUp,
+    isLoading,
   };
 
   return (

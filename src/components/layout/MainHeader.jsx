@@ -38,15 +38,14 @@ export default function MainHeader() {
         <p className="text-xl font-bold">Home</p>
       </div>
       <div
-        onClick={handleDropDown}
         ref={dropDownRef}
-        className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] w-[40px] h-[40px] p-2 rounded-full cursor-pointer"
+        className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] px-2 py-2 rounded-full cursor-pointer"
       >
-        <button className="flex items-center justify-center cursor-pointer">
-          <p>{userProfile.fullName?.substring(0, 1)}</p>
+        <button onClick={handleDropDown}>
+          <p>{userProfile?.fullName.substring(0, 1)}</p>
         </button>
         {dropDownOpen && (
-          <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-10 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-[500px] z-20000 rounded-lg">
+          <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-14 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-[500px] z-20000 rounded-lg">
             <button
               onClick={signUserOut}
               className="border-b border-white/15 w-full text-left py-4 px-2 text-lg hover:bg-[var(--accent-dark)] hover:text-[var(--primary-text)] active:scale-98 hover:rounded-t-lg transition-all duration-200 cursor-pointer"
