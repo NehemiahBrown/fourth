@@ -1,6 +1,13 @@
 import { useParams } from "react-router";
 import { useState, useEffect, useRef } from "react";
 import { getMovieDetails } from "../../services/tmdb.js";
+import {
+  addMovieToWatchList,
+  deleteMovieFromWatchList,
+} from "../../services/firestore.js";
+
+import { useWatchList } from "../../context/WatchListContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 import {
   Bookmark,
@@ -14,16 +21,22 @@ import TrailerModal from "./TrailerModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();
+  const { watchListMovies, removeFromWatchList, addToWatchList } =
+    useWatchList();
+  const { currentUser } = useAuth();
 
   const [movieDetails, setMovieDetails] = useState();
   const [isOverviewOverflowing, setIsOverviewOverflowing] = useState(false);
   const [showFullOverview, setShowFullOverview] = useState(false);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isWatchList, setIsWatchList] = useState(false);
 
   const overviewRef = useRef(null);
   const carouselRef = useRef(null);
+
+  const isInWatchList = watchListMovies.some(
+    (movie) => movie.id === movieDetails?.id,
+  );
 
   function closeModal() {
     setShowTrailerModal(false);
@@ -37,8 +50,18 @@ export default function MovieDetailedView() {
     setIsFavorite((current) => !current);
   }
 
-  function toggleWatchList() {
-    setIsWatchList((current) => !current);
+  function addOrRemoveFromWatchList() {
+    if (!isInWatchList) {
+      // adding to state
+      addToWatchList(movieDetails);
+      //adding to firestore
+      addMovieToWatchList(currentUser.uid, movieDetails);
+    } else if (isInWatchList) {
+      // deleting from state
+      removeFromWatchList(movieDetails);
+      //deleting from firestore
+      deleteMovieFromWatchList(currentUser.uid, movieDetails.id);
+    }
   }
 
   useEffect(() => {
@@ -130,7 +153,7 @@ export default function MovieDetailedView() {
         <div className="flex flex-col gap-2 px-3 py-4 min-w-0 flex-1">
           <div className="flex gap-2">
             <button
-              onClick={toggleWatchList}
+              onClick={addOrRemoveFromWatchList}
               className="flex items-center gap-2 px-3 
                       py-2 rounded-lg 
                       border border-[var(--accent-dark)] 
@@ -139,7 +162,7 @@ export default function MovieDetailedView() {
             >
               <Bookmark
                 size={18}
-                className={isWatchList ? "fill-current" : ""}
+                className={isInWatchList ? "fill-current" : ""}
               />
               Watchlist
             </button>
