@@ -1,6 +1,6 @@
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, NavLink } from "react-router";
 
 import { useClickOutside } from "../../hooks/clickOutsideDiv.js";
 import FourthIcon from "../../assets/fourthicon.png";
@@ -34,14 +34,21 @@ export default function MainHeader() {
   return (
     <header className="flex justify-between py-3 px-2 shadow-[var(--shadow-bottom)]">
       <div className="flex gap-2 items-center">
-        <img src={FourthIcon} alt="Fourth Logo" className="w-[3rem] h-[3rem]" />
+        <NavLink to="/app">
+          <img
+            src={FourthIcon}
+            alt="Fourth Logo"
+            className="w-[3rem] h-[3rem]"
+          />
+        </NavLink>
         <p className="text-xl font-bold">Home</p>
       </div>
       <div
+        onClick={handleDropDown}
         ref={dropDownRef}
-        className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] px-2 py-2 rounded-full cursor-pointer"
+        className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] px-2 py-2 w-[40px] h-[40px] rounded-full cursor-pointer"
       >
-        <button onClick={handleDropDown}>
+        <button className="cursor-pointer">
           <p>{userProfile?.fullName.substring(0, 1)}</p>
         </button>
         {dropDownOpen && (

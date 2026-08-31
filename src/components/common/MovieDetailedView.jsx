@@ -1,56 +1,239 @@
 import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getMovieDetails } from "../../services/tmdb.js";
+
+import {
+  Bookmark,
+  Heart,
+  Play,
+  User,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
+import TrailerModal from "./TrailerModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();
-  const [movieDetails, setMovieDetails] = useState();
-  const [showFullOverview, setShowFullOverview] = useState(false);
 
-  useEffect(() =>{
+  const [movieDetails, setMovieDetails] = useState();
+  const [isOverviewOverflowing, setIsOverviewOverflowing] = useState(false);
+  const [showFullOverview, setShowFullOverview] = useState(false);
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isWatchList, setIsWatchList] = useState(false);
+
+  const overviewRef = useRef(null);
+  const carouselRef = useRef(null);
+
+  function closeModal() {
+    setShowTrailerModal(false);
+  }
+
+  function openModal() {
+    setShowTrailerModal(true);
+  }
+
+  function toggleFavoriteMovie() {
+    setIsFavorite((current) => !current);
+  }
+
+  function toggleWatchList() {
+    setIsWatchList((current) => !current);
+  }
+
+  useEffect(() => {
     const fetchMovieData = async () => {
       const movieData = await getMovieDetails(movieId);
-      setMovieDetails(movieData)
-    }
+      setMovieDetails(movieData);
+    };
     fetchMovieData();
-  }, [])
+  }, [movieId]);
 
-  console.log(movieDetails)
+  useEffect(() => {
+    function checkOverviewOverflow() {
+      const overview = overviewRef.current;
 
-  function toggleOverview(){
-    setShowFullOverview((current) => !current)
+      if (overview && !showFullOverview) {
+        setIsOverviewOverflowing(overview.scrollHeight > overview.clientHeight);
+      }
+    }
+    checkOverviewOverflow();
+    window.addEventListener("resize", checkOverviewOverflow);
+
+    return () => {
+      window.removeEventListener("resize", checkOverviewOverflow);
+    };
+  }, [movieDetails, showFullOverview]);
+
+  console.log(movieDetails);
+
+  function toggleOverview() {
+    setShowFullOverview((current) => !current);
+  }
+
+  function scrollLeft() {
+    if (carouselRef.current) {
+      const carouselWidth = carouselRef.current.clientWidth;
+      carouselRef.current.scrollBy({
+        left: -(carouselWidth * 0.7),
+        behavior: "smooth",
+      });
+    }
+  }
+
+  function scrollRight() {
+    if (carouselRef.current) {
+      const carouselWidth = carouselRef.current.clientWidth;
+      carouselRef.current.scrollBy({
+        left: carouselWidth * 0.7,
+        behavior: "smooth",
+      });
+    }
   }
 
   return (
     <main className="h-dvh">
       <div className="relative">
-        <img src={movieDetails?.backdrop} alt={`${movieDetails?.title} backdrop.`} className="w-full"/>
-          <div className="absolute bottom-0 px-2">
-            <p className="max-w-[75%] text-3xl">{movieDetails?.title}</p>
-            <div>
-              <div className="flex gap-2">
-                <p>{movieDetails?.releaseYear}</p>
-                <p>·</p>
-                <p>{`${Math.floor(Math.round(movieDetails?.runtime / 60))}h ${movieDetails?.runtime % 60}m`}</p>
-              </div>
-              <p className="flex gap-2">{movieDetails?.genres.join(" · ")}</p>
+        <img
+          src={movieDetails?.backdrop}
+          alt={`${movieDetails?.title} backdrop.`}
+          className="w-full"
+        />
+        <div className="absolute bottom-0 max-w-[75%] px-4 pb-2">
+          <p className=" text-3xl">{movieDetails?.title}</p>
+          <div>
+            <div className="flex gap-2">
+              <p>{movieDetails?.releaseYear}</p>
+              <p>·</p>
+              <p>{`${Math.floor(Math.round(movieDetails?.runtime / 60))}h ${movieDetails?.runtime % 60}m`}</p>
             </div>
+            <p className="flex gap-2">{movieDetails?.genres.join(" · ")}</p>
           </div>
+        </div>
+        <div className="absolute bottom-0 right-0 px-4 pb-2">
+          <button
+            onClick={openModal}
+            className="p-2 bg-[var(--accent-dark)] rounded-full active:scale-95 hover:bg-[var(--accent)] hover:text-[var(--accent-dark)] transition-all duration-200 cursor-pointer"
+          >
+            <Play size={30} />
+          </button>
+        </div>
       </div>
       <div className="md:flex md:mt-8 gap-4">
         <div className="hidden md:flex">
-          <img src={movieDetails?.poster} alt={`${movieDetails?.title} poster`} />
+          <img
+            src={movieDetails?.poster}
+            alt={`${movieDetails?.title} poster`}
+            className="h-[250px] max-w-[400px]"
+          />
         </div>
-        <div className="flex flex-col gap-2 px-3 py-4">
+        <div className="flex flex-col gap-2 px-3 py-4 min-w-0 flex-1">
+          <div className="flex gap-2">
+            <button
+              onClick={toggleWatchList}
+              className="flex items-center gap-2 px-3 
+                      py-2 rounded-lg 
+                      border border-[var(--accent-dark)] 
+                      hover:bg-[var(--accent-dark)] active:scale-95 
+                      transition-all duration-200 cursor-pointer"
+            >
+              <Bookmark
+                size={18}
+                className={isWatchList ? "fill-current" : ""}
+              />
+              Watchlist
+            </button>
+
+            <button
+              onClick={toggleFavoriteMovie}
+              className="flex items-center gap-2 px-3 
+                      py-2
+                      rounded-lg
+                      border border-[var(--accent-dark)]
+                      hover:bg-[var(--accent-dark)] active:scale-95
+                      transition-all duration-200 cursor-pointer"
+            >
+              <Heart size={18} className={isFavorite ? "fill-current" : ""} />
+              Favorite
+            </button>
+          </div>
           <div className="flex flex-col">
             <p className="text-lg md:text-xl font-bold">Overview :</p>
-            <p className={`${showFullOverview === false ? "line-clamp-3" : "line-clamp-none"} md:text-lg`}>{movieDetails?.overview}</p>
-            <button onClick={toggleOverview} className="mt-2 bg-[var(--accent-dark)] px-2 py-1 text-sm md:text-md self-end rounded-lg">{`${showFullOverview === false ? "Read More" : "Hide"}`}</button>
-          </div> 
+            <p
+              ref={overviewRef}
+              className={`${showFullOverview === false ? "line-clamp-3" : "line-clamp-none"} md:text-lg`}
+            >
+              {movieDetails?.overview}
+            </p>
+            {isOverviewOverflowing && (
+              <button
+                onClick={toggleOverview}
+                className="mt-2 bg-[var(--accent-dark)] px-2 py-1 text-sm sm:text-md self-end rounded-lg cursor-pointer"
+              >{`${!showFullOverview ? "Read More" : "Show Less"}`}</button>
+            )}
+          </div>
           <div>
-          <p className="text-lg md:text-xl font-bold">Cast :</p>
-          </div></div>
+            <p className="text-lg md:text-xl font-bold">Cast :</p>
+            <div className="mt-4 relative">
+              <button
+                onClick={scrollLeft}
+                className="absolute carouselArrow top-0 h-[75px] left-2 z-10 opacity-0 active:scale-95 cursor-pointer"
+              >
+                <ChevronLeft size={40} />
+              </button>
+              <div
+                ref={carouselRef}
+                className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory"
+              >
+                {movieDetails?.cast.map((actor) => {
+                  return (
+                    <div
+                      key={actor.id}
+                      className="flex flex-col items-center w-[110px] shrink-0 snap-start"
+                    >
+                      {actor.picture ? (
+                        <img
+                          className="w-[75px] h-[75px] rounded-2xl object-cover"
+                          src={actor.picture}
+                          alt={`${actor.castName} photo`}
+                        />
+                      ) : (
+                        <div className="border border-[var(--accent)] rounded-2xl">
+                          <User
+                            size={30}
+                            className="w-[60px] h-[60px] rounded-2xl"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-center">{actor.castName}</p>
+                        <div>
+                          <p className="text-center text-sm text-[var(--primary-text)]/60 line-clamp-2">
+                            {actor.character}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <button
+                onClick={scrollRight}
+                className="absolute carouselArrow top-0 right-2 h-[75px] z-10 opacity-0 active:scale-95 cursor-pointer"
+              >
+                <ChevronRight size={40} />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+      {showTrailerModal && (
+        <TrailerModal
+          trailerKey={movieDetails?.trailerKey}
+          title={movieDetails?.title}
+          closeModal={closeModal}
+        />
+      )}
     </main>
   );
 }
