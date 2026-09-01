@@ -3,10 +3,13 @@ import {
   doc,
   setDoc,
   getDoc,
+  getDocs,
   deleteDoc,
+  collection,
   serverTimestamp,
 } from "firebase/firestore";
 
+// User Documents
 export async function createUserDocument(uid, userData) {
   await setDoc(doc(db, "users", uid), {
     ...userData,
@@ -25,6 +28,7 @@ export async function getUserDocument(uid) {
   }
 }
 
+// Watchlist Documents
 export async function addMovieToWatchList(uid, movieData) {
   const watchListMovieDocRef = doc(
     db,
@@ -50,4 +54,13 @@ export async function deleteMovieFromWatchList(uid, movieId) {
   );
 
   await deleteDoc(watchListMovieDocRef);
+}
+
+export async function getMovieWatchListDocs(uid) {
+  const watchListSnapshot = await getDocs(
+    collection(db, "users", uid, "watchlist"),
+  );
+  return watchListSnapshot.docs.map((movie) => {
+    return movie.data();
+  });
 }

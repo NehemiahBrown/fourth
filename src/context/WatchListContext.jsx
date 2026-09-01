@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { getMovieWatchListDocs } from "../services/firestore";
+import { useAuth } from "./AuthContext.jsx";
 
 export const WatchListContext = createContext();
 
@@ -7,7 +9,23 @@ export function useWatchList() {
 }
 
 export function WatchListProvider({ children }) {
+  const { currentUser } = useAuth();
+
   const [watchListMovies, setWatchListMovies] = useState([]);
+
+  useEffect(() => {
+    async function fetchWatchListMovies() {
+      if (currentUser) {
+        const usersWatchListMovies = await getMovieWatchListDocs(
+          currentUser.uid,
+        );
+        setWatchListMovies(usersWatchListMovies);
+      } else {
+        setWatchListMovies([]);
+      }
+    }
+    fetchWatchListMovies();
+  }, [currentUser]);
 
   function addToWatchList(movie) {
     const alreadyAdded = watchListMovies.some((watchListMovie) => {
