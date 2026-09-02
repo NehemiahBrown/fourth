@@ -1,5 +1,7 @@
-export default function MainFooter(){
-    return (
-        <p>This is my main footer!</p>
-    )
+export default function MainFooter() {
+  return (
+    <div className="hidden md:block">
+      <p>This is my main footer!</p>
+    </div>
+  );
 }

@@ -7,6 +7,9 @@ import SignUp from "./components/auth/SignUp";
 import LogIn from "./components/auth/LogIn";
 import Landing from "./components/auth/Landing";
 import MovieDetailedView from "./components/common/MovieDetailedView.jsx";
+import WatchList from "./components/common/WatchList.jsx";
+import Friends from "./components/common/Friends.jsx";
+import Profile from "./components/common/Profile.jsx";
 
 import RootLayout from "./layouts/RootLayout";
 import PublicLayout from "./layouts/PublicLayout";
@@ -27,6 +30,9 @@ export default function App() {
             <Route element={<AuthRequired />}>
               <Route element={<RootLayout />}>
                 <Route path="/app" element={<Home />} />
+                <Route path="/watchlist" element={<WatchList />} />
+                <Route path="/friends" element={<Friends />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/movie/:movieId" element={<MovieDetailedView />} />
               </Route>
             </Route>

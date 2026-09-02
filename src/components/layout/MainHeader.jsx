@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { useNavigate, NavLink } from "react-router";
 
 import { useClickOutside } from "../../hooks/clickOutsideDiv.js";
-import FourthIcon from "../../assets/fourthicon.png";
+import FourthLogoHorz from "../../assets/fourthlogohorz.png";
 
 export default function MainHeader() {
   const [dropDownOpen, setDropDownOpen] = useState(false);
@@ -32,16 +32,15 @@ export default function MainHeader() {
   }
 
   return (
-    <header className="flex justify-between py-3 px-2 shadow-[var(--shadow-bottom)]">
+    <header className="flex items-center justify-between py-3 px-2 shadow-[var(--shadow-bottom)]">
       <div className="flex gap-2 items-center">
         <NavLink to="/app">
           <img
-            src={FourthIcon}
+            src={FourthLogoHorz}
             alt="Fourth Logo"
-            className="w-[3rem] h-[3rem]"
+            className="w-[7rem] h-[3rem]"
           />
         </NavLink>
-        <p className="text-xl font-bold">Home</p>
       </div>
       <div
         onClick={handleDropDown}

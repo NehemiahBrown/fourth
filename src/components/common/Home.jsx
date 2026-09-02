@@ -42,8 +42,8 @@ export default function Home() {
   }
 
   return (
-    <main className="px-4 min-h-dvh">
-      <div className="relative w-full py-4 px-2">
+    <main>
+      <div className="relative w-full mt-6 px-2">
         <input
           type="search"
           className="h-[35px] w-full pl-[8px] bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)] rounded-md"
@@ -51,7 +51,7 @@ export default function Home() {
         />
         <Search className="absolute -translate-y-1/2 top-[50%] right-[12px]" />
       </div>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 mt-6">
         <div className="flex flex-col gap-4">
           <div>
             <p className="text-lg font-bold">Recently Watched</p>
