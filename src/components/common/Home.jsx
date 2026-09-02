@@ -69,12 +69,12 @@ export default function Home() {
           <div className="relative">
             <button
               onClick={scrollLeft}
-              className="absolute carouselArrow top-0 bottom-0 left-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
+              className="hidden md:block absolute carouselArrow top-0 bottom-0 left-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
             >
               <ChevronLeft size={80} />
             </button>
             <div
-              className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory"
+              className=" flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory"
               ref={carouselRef}
             >
               {trendingMovies.map((movie) => {
@@ -92,7 +92,7 @@ export default function Home() {
             </div>
             <button
               onClick={scrollRight}
-              className="absolute carouselArrow top-0 bottom-0 right-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
+              className="hidden md:block absolute carouselArrow top-0 bottom-0 right-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
             >
               <ChevronRight size={80} />
             </button>
