@@ -8,7 +8,7 @@ export default function RootLayout() {
   return (
     <div className="w-full mx-auto max-w-4xl">
       <MainHeader />
-      <main className="min-h-dvh p-4 pb-20 md:pb-0">
+      <main className="flex flex-col min-h-dvh p-4 pb-20 md:pb-0">
         <Outlet />
       </main>
       <MobileNav />
