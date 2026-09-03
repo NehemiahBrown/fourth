@@ -2,7 +2,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useState, useRef } from "react";
 import { useNavigate, NavLink } from "react-router";
 
-import { X } from "lucide-react"
+import { X } from "lucide-react";
 import { useClickOutside } from "../../hooks/clickOutsideDiv.js";
 import FourthLogoHorz from "../../assets/fourthlogohorz.png";
 
@@ -52,12 +52,12 @@ export default function MainHeader() {
           <p>{userProfile?.fullName.substring(0, 1)}</p>
         </button>
         {dropDownOpen && (
-          <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-14 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-[260px] z-20000 rounded-lg">
-           <div className="sm:hidden">
-              <X/>
-           </div>
+          <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-8 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-[260px] z-20000 rounded-lg">
+            <div className="sm:hidden">
+              <X />
+            </div>
             <NavLink
-            to="/profile"
+              to="/profile"
               className="block mt-6 sm:mt-0 border-b border-white/15 w-full text-left py-4 px-2 text-lg hover:bg-[var(--accent-dark)] hover:text-[var(--primary-text)] active:scale-98 hover:rounded-t-lg transition-all duration-200 cursor-pointer"
             >
               Profile

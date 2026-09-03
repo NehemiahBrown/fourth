@@ -60,7 +60,7 @@ export default function MovieDetailedView() {
       // deleting from state
       removeFromWatchList(movieDetails);
       //deleting from firestore
-      deleteMovieFromWatchList(currentUser.uid, movieDetails.id);
+      deleteMovieFromWatchList(currentUser.uid, movieDetails?.id);
     }
   }
 
@@ -116,12 +116,13 @@ export default function MovieDetailedView() {
 
   return (
     <main className="h-dvh">
-      <div className="relative">
+      <div className="relative ">
         <img
           src={movieDetails?.backdrop}
           alt={`${movieDetails?.title} backdrop.`}
-          className="w-full"
+          className=" w-full"
         />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-b from-transparent via-[var(--background)]/80 to-[var(--background)]"></div>
         <div className="absolute bottom-0 max-w-[75%] px-4 pb-2">
           <p className=" text-3xl">{movieDetails?.title}</p>
           <div>
