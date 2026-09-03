@@ -52,7 +52,7 @@ export default function MainHeader() {
           <p>{userProfile?.fullName.substring(0, 1)}</p>
         </button>
         {dropDownOpen && (
-          <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-8 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-[260px] z-20000 rounded-lg">
+          <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-8 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-auto z-20000 rounded-lg">
             <div className="sm:hidden">
               <X />
             </div>

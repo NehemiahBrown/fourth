@@ -19,6 +19,20 @@ export async function getAPI(endpoint) {
   }
 }
 
+export async function getUpcomingMovies(){
+  const movies = await getAPI("movie/upcoming?language=en-US&page=1")
+  const upcomingMoviesObject = movies.results.map((movie) => {
+    return {
+      id: movie.id,
+      poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`, 
+      backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
+      title: movie.title,
+
+    }
+  });
+  return upcomingMoviesObject;
+}
+
 export async function getTrendingMovies() {
   const movies = await getAPI("trending/movie/day?language=en-US");
   const trendingMoviesObject = movies.results.map((movie) => {
