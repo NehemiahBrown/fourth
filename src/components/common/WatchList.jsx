@@ -1,6 +1,6 @@
 import { useWatchList } from "../../context/WatchListContext";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {useNavigate} from "react-router"
 import FourthIcon from "../../assets/fourthicon.png"
 
@@ -9,7 +9,11 @@ export default function WatchList() {
     useWatchList();
 
   const [movieGenre, setMovieGenre] = useState("All")
+  const [rowsShown, setRowsShown] = useState(2);
+  const [columnsShown, setColumnsShown] = useState(2);
+
   const filteredMovies = movieGenre === "All" ? watchListMovies : watchListMovies.filter((movie) => movie.genres.some((genre) => movieGenre.toLowerCase() === genre.toLowerCase()))
+  const moviesShown = rowsShown * columnsShown;
 
   const carouselRef = useRef(null);
   const navigate = useNavigate()
@@ -59,6 +63,25 @@ export default function WatchList() {
   function filterMovies(e){
     const buttonText = e.currentTarget.textContent
     setMovieGenre(buttonText)
+  }
+
+  useEffect(()=> {
+    function updateColumns(){
+      if(window.innerWidth <= 640){
+        setColumnsShown(2)
+      } else if(window.innerWidth <= 768){
+        setColumnsShown(3)
+      } else{
+        setColumnsShown(4)
+      }
+    }
+   updateColumns();
+   window.addEventListener("resize", updateColumns)
+   return () => window.removeEventListener("resize", updateColumns)
+  }, [])
+
+  function loadMoreMovies(){
+    setRowsShown((current) => current + 2)
   }
 
   return (
@@ -144,7 +167,7 @@ export default function WatchList() {
             <div className="col-span-full flex items-center justify-center">
               <p className="text-3xl md:text-6xl text-center">No Movies in this genre</p> 
             </div> 
-          : filteredMovies.map((movie) =>{
+          : filteredMovies.slice(0, moviesShown).map((movie, index) =>{
             return (
               <div key={movie.id} className="overflow-hidden">
                 <img onClick={() => navigate(`/movie/${movie.id}`)} src={movie.poster} alt={movie.title} className="object-cover hover:scale-110 active:scale-98 transition-transform duration-300 ease-in-out cursor-pointer "/>
@@ -152,6 +175,9 @@ export default function WatchList() {
             )
           })}
         </div>
+       {moviesShown <= filteredMovies.length && <div className="mx-auto mt-6 w-[70%] max-w-[150px]">
+          <button onClick={loadMoreMovies} className="w-full bg-[var(--accent)] py-1 rounded-sm cursor-pointer active:scale-95">Load More</button>
+        </div>}
       </div>
       </section>
     </>
