@@ -20,8 +20,23 @@ export async function getAPI(endpoint) {
 }
 
 export async function getUpcomingMovies(){
-  const movies = await getAPI("movie/upcoming?language=en-US&page=1")
-  const upcomingMoviesObject = movies.results.map((movie) => {
+  const moviesPage1 = await getAPI("movie/upcoming?language=en-US&page=1")
+  const moviesPage2 = await getAPI("movie/upcoming?language=en-US&page=2")
+  const moviesPage3 = await getAPI("movie/upcoming?language=en-US&page=3")
+  const moviesPage4 = await getAPI("movie/upcoming?language=en-US&page=4")
+
+
+  const currentDate = new Date();
+  const movies = [
+    ...moviesPage1.results,
+    ...moviesPage2.results,
+    ...moviesPage3.results,
+    ...moviesPage4.results,
+
+  ]
+
+  console.log(movies)
+  const upcomingMoviesObject = movies.filter((movie) => { const releaseDate = new Date(movie?.release_date); return (currentDate <= releaseDate)}).map((movie) => {
     return {
       id: movie.id,
       poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`, 
@@ -59,7 +74,6 @@ export async function getMovieDetails(movieId) {
   const trailer = movie.videos.results.find(
     (video) => video.site === "YouTube" && video.type === "Trailer",
   );
-  console.log(movie);
   const movieDetailedData = {
     id: movie.id,
     title: movie.title,

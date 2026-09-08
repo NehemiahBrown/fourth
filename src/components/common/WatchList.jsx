@@ -11,6 +11,7 @@ export default function WatchList() {
   const [movieGenre, setMovieGenre] = useState("All")
   const [rowsShown, setRowsShown] = useState(2);
   const [columnsShown, setColumnsShown] = useState(2);
+  const [sortOption, setSortOption] = useState("default")
 
   const filteredMovies = movieGenre === "All" ? watchListMovies : watchListMovies.filter((movie) => movie.genres.some((genre) => movieGenre.toLowerCase() === genre.toLowerCase()))
   const moviesShown = rowsShown * columnsShown;
@@ -63,6 +64,7 @@ export default function WatchList() {
   function filterMovies(e){
     const buttonText = e.currentTarget.textContent
     setMovieGenre(buttonText)
+    setRowsShown(2)
   }
 
   useEffect(()=> {
@@ -84,6 +86,42 @@ export default function WatchList() {
     setRowsShown((current) => current + 2)
   }
 
+  // Sort movies function
+function sortMovies(){
+    const movies = [
+      ...filteredMovies
+    ]
+
+    switch(sortOption){
+      case "default":
+        return movies.sort((a, b ) => b.addedAt?.toDate() - a.addedAt?.toDate())
+      case "oldest":
+        return movies.sort((a, b ) => a.addedAt?.toDate() - b.addedAt?.toDate())
+      case "titleAlphabetical":
+        return movies.sort((a, b) => a.title?.localeCompare(b?.title)) 
+      case "titleReverse":
+        return movies.sort((a, b) => b.title?.localeCompare(a?.title)) 
+      case "releaseDateNewest":
+        return movies.sort((a, b) => {
+          const dateA = new Date(a?.releaseDate)
+          const dateB = new Date(b?.releaseDate)
+          return(
+            dateB - dateA
+          )
+        })
+      case "releaseDateOldest":
+        return movies.sort((a, b) => {
+          const dateA = new Date(a?.releaseDate)
+          const dateB = new Date(b?.releaseDate)
+          return(
+            dateA - dateB
+          )
+        })
+      default :
+        return movies
+    }
+  }
+  const sortedMovies = sortMovies();
   return (
     <>
     <section className="flex flex-col flex-1">
@@ -91,10 +129,14 @@ export default function WatchList() {
           <h1 className="text-3xl font-bold text-[var(--accent)]">Watchlist</h1>
           <div className="flex justify-between items-center">
             <p>{`${watchListMovies.length === 0 ? "No saved movies yet." : `${watchListMovies.length} ${watchListMovies.length === 1 ? "Title" : "Titles"}`}`}</p>
-            <select className="bg-[var(--accent)] text-[var(--secondary-text)] rounded-md py-1 px-3 focus:outline-none focus:ring-0 cursor-pointer">
-              <option value="recent">Sort: Recently Added</option>
-              <option value="title">Sort: Title</option>
-              <option value="releaseDate">Sort: Release Date</option>
+            <select onChange={(e) => setSortOption(e.target.value)} className="bg-[var(--accent)] text-[var(--secondary-text)] rounded-md py-1 px-3 focus:outline-none focus:ring-0 cursor-pointer">
+              <option className="cursor-pointer" value="default">Recently Added</option>
+              <option className="cursor-pointer" value="oldest">Oldest Added</option>
+              <option className="cursor-pointer" value="titleAlphabetical">Title [A-Z]</option>
+              <option className="cursor-pointer" value="titleReverse">Title [Z-A]</option>
+              <option className="cursor-pointer" value="releaseDateNewest">Release Date: Newest</option>
+              <option className="cursor-pointer" value="releaseDateOldest">Release Date: Oldest</option>
+
             </select>
           </div>
       </div>
@@ -162,12 +204,12 @@ export default function WatchList() {
             <ChevronRight size={30} />
           </button>
         </div>
-        <div className="grid flex-1 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
-          {filteredMovies.length === 0 ? 
-            <div className="col-span-full flex items-center justify-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
+          {sortedMovies.length === 0 ? 
+            <div className="mt-6 col-span-full flex items-center justify-center">
               <p className="text-3xl md:text-6xl text-center">No Movies in this genre</p> 
             </div> 
-          : filteredMovies.slice(0, moviesShown).map((movie, index) =>{
+          : sortedMovies.slice(0, moviesShown).map((movie, index) =>{
             return (
               <div key={movie.id} className="overflow-hidden">
                 <img onClick={() => navigate(`/movie/${movie.id}`)} src={movie.poster} alt={movie.title} className="object-cover hover:scale-110 active:scale-98 transition-transform duration-300 ease-in-out cursor-pointer "/>
@@ -175,7 +217,7 @@ export default function WatchList() {
             )
           })}
         </div>
-       {moviesShown <= filteredMovies.length && <div className="mx-auto mt-6 w-[70%] max-w-[150px]">
+       {moviesShown <= sortedMovies.length && <div className="mx-auto mt-6 w-[70%] max-w-[150px]">
           <button onClick={loadMoreMovies} className="w-full bg-[var(--accent)] py-1 rounded-sm cursor-pointer active:scale-95">Load More</button>
         </div>}
       </div>

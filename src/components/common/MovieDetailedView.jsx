@@ -88,8 +88,6 @@ export default function MovieDetailedView() {
     };
   }, [movieDetails, showFullOverview]);
 
-  console.log(movieDetails);
-
   function toggleOverview() {
     setShowFullOverview((current) => !current);
   }

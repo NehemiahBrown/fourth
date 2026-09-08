@@ -9,7 +9,9 @@ export default function Home() {
   const [upcomingMovies, setUpcomingMovies] = useState([]);
   const [recentlyWatched, setRecentlyWatched] = useState([]);
 
-  const carouselRef = useRef(null);
+  const trendingRef = useRef(null);
+  const upcomingRef = useRef(null);
+
   const navigate = useNavigate();
 
 
@@ -32,7 +34,7 @@ export default function Home() {
   }, [])
 
   //   Carousel scroll functions
-  function scrollLeft() {
+  function scrollLeft(carouselRef) {
     const carouselWidth = carouselRef.current.clientWidth;
     if (carouselRef.current) {
       carouselRef.current.scrollBy({
@@ -42,7 +44,7 @@ export default function Home() {
     }
   }
 
-  function scrollRight() {
+  function scrollRight(carouselRef) {
     const carouselWidth = carouselRef.current.clientWidth;
     if (carouselRef.current) {
       carouselRef.current.scrollBy({
@@ -71,14 +73,14 @@ export default function Home() {
           </div>
           <div className="relative">
             <button
-              onClick={scrollLeft}
+              onClick={() => scrollLeft(trendingRef)}
               className="hidden md:block absolute carouselArrow top-0 bottom-0 left-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
             >
               <ChevronLeft size={80} />
             </button>
             <div
               className=" flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory"
-              ref={carouselRef}
+              ref={trendingRef}
             >
               {trendingMovies.map((movie) => {
                 return (
@@ -94,7 +96,7 @@ export default function Home() {
               })}
             </div>
             <button
-              onClick={scrollRight}
+              onClick={() => scrollRight(trendingRef)}
               className="hidden md:block absolute carouselArrow top-0 bottom-0 right-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
             >
               <ChevronRight size={80} />
@@ -108,14 +110,14 @@ export default function Home() {
           </div>
           <div className="relative">
             <button
-              onClick={scrollLeft}
+              onClick={() => scrollLeft(upcomingRef)}
               className="hidden md:block absolute carouselArrow top-0 bottom-0 left-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
             >
               <ChevronLeft size={80} />
             </button>
             <div
               className=" flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory"
-              ref={carouselRef}
+              ref={upcomingRef}
             >
               {upcomingMovies.map((movie) => {
                 return (
@@ -131,7 +133,7 @@ export default function Home() {
               })}
             </div>
             <button
-              onClick={scrollRight}
+              onClick={() => scrollRight(upcomingRef)}
               className="hidden md:block absolute carouselArrow top-0 bottom-0 right-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
             >
               <ChevronRight size={80} />
