@@ -39,7 +39,7 @@ export default function MainHeader() {
           <img
             src={FourthLogoHorz}
             alt="Fourth Logo"
-            className="w-[7rem] h-[3rem]"
+            className="w-[8rem] h-[3rem]"
           />
         </NavLink>
       </div>

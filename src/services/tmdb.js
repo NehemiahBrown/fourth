@@ -24,6 +24,8 @@ export async function getUpcomingMovies(){
   const moviesPage2 = await getAPI("movie/upcoming?language=en-US&page=2")
   const moviesPage3 = await getAPI("movie/upcoming?language=en-US&page=3")
   const moviesPage4 = await getAPI("movie/upcoming?language=en-US&page=4")
+  const moviesPage5 = await getAPI("movie/upcoming?language=en-US&page=5")
+
 
 
   const currentDate = new Date();
@@ -32,11 +34,20 @@ export async function getUpcomingMovies(){
     ...moviesPage2.results,
     ...moviesPage3.results,
     ...moviesPage4.results,
+    ...moviesPage5.results,
+
 
   ]
 
+  // API gave duplicate movies. This filters them out.
+  const uniqueMovies = movies.filter((movie, index, self) => {
+    return index === self.findIndex((otherMovie) => otherMovie.id === movie.id)
+  })
+
   console.log(movies)
-  const upcomingMoviesObject = movies.filter((movie) => { const releaseDate = new Date(movie?.release_date); return (currentDate <= releaseDate)}).map((movie) => {
+
+  
+  const upcomingMoviesObject = uniqueMovies.filter((movie) => { const releaseDate = new Date(movie?.release_date); return (currentDate <= releaseDate)}).map((movie) => {
     return {
       id: movie.id,
       poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`, 
