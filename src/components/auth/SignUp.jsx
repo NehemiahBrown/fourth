@@ -17,11 +17,13 @@ export default function SignUp() {
     let password = e.target.newPassword.value;
     let fullName = e.target.newName.value;
     let userName = e.target.newUsername.value;
+    let profilePicture = null;
 
     const userData = {
       fullName,
       userName,
       email,
+      profilePicture,
     };
 
     try {

@@ -1,9 +1,21 @@
 import { X, ImageUp } from "lucide-react"
+import { upload } from "../../services/storage.js";
+import { useAuth } from "../../context/AuthContext.jsx";
+import {useState} from "react";
 
 export default function ProfilePictureModal({closeModal}){
+    const {currentUser} = useAuth();
+    const [profilePicture, setProfilePicture] = useState(null)
 
-    function uploadPhoto(){
+    function addProfilePicture(e){
+        setProfilePicture(e.target.files[0])
+    }
 
+    async function uploadPhoto(){
+        if(!profilePicture){
+            return
+        }
+        await upload(profilePicture, currentUser)
     }
     return (
         <div className="fixed flex justify-center items-center inset-0 bg-[var(--surface)]/70 z-100000 backdrop-blur-sm">
@@ -19,7 +31,7 @@ export default function ProfilePictureModal({closeModal}){
                             <ImageUp/>
                             <p className="text-sm">PNG, JPG, WEBP</p>
                          </div>
-                        <input type="file" accept="image/png, image/jpeg, image/webp" className="hidden"/>
+                        <input onChange={addProfilePicture} type="file" accept="image/png, image/jpeg, image/webp" className="hidden"/>
                     </label>
                 </div>
                 <div className="flex gap-2 self-end">
