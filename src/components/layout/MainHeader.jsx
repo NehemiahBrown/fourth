@@ -46,15 +46,15 @@ export default function MainHeader() {
       <div
         onClick={handleDropDown}
         ref={dropDownRef}
-        className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] px-2 py-2 w-[40px] h-[40px] rounded-full cursor-pointer"
+        className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] rounded-full cursor-pointer"
       >
-        <button className="cursor-pointer">
-          <p>{userProfile?.fullName.substring(0, 1)}</p>
+        <button className="w-[45px] h-[45px] md:w-[50px] md:h-[50px] rounded-full cursor-pointer">
+          <img className="w-full h-full rounded-full object-cover" src={userProfile?.profilePicture} alt="" />
         </button>
         {dropDownOpen && (
           <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-8 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-auto z-20000 rounded-lg">
-            <div className="sm:hidden">
-              <X />
+            <div className="sm:hidden flex justify-end">
+              <X className="mt-4 mr-2"/>
             </div>
             <NavLink
               to="/profile"
