@@ -5,10 +5,20 @@ import {
   getDoc,
   getDocs,
   deleteDoc,
+  updateDoc,
   collection,
   serverTimestamp,
 } from "firebase/firestore";
+import {getUserProfilePictureURL} from "./storage.js"
 
+
+export async function updateProfilePicture(uid, picture){
+  const userDocRef = doc(db, "users", uid);
+
+  await updateDoc(userDocRef, {
+    profilePicture: picture
+  });
+}
 // User Documents
 export async function createUserDocument(uid, userData) {
   await setDoc(doc(db, "users", uid), {
@@ -27,6 +37,7 @@ export async function getUserDocument(uid) {
     console.log("No document exists.");
   }
 }
+
 
 // Watchlist Documents
 export async function addMovieToWatchList(uid, movieData) {

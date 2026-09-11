@@ -2,6 +2,9 @@ import { X, ImageUp } from "lucide-react"
 import { upload } from "../../services/storage.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import {useState} from "react";
+import {updateProfilePicture} from "../../services/firestore.js"
+import {getUserProfilePictureURL} from "../../services/storage.js"
+
 
 export default function ProfilePictureModal({closeModal}){
     const {currentUser} = useAuth();
@@ -16,7 +19,10 @@ export default function ProfilePictureModal({closeModal}){
             return
         }
         await upload(profilePicture, currentUser)
+        const profilePicture = getUserProfilePictureURL(currentUser)
+       await updateProfilePicture(currentUser.uid, profilePictureURL)
     }
+
     return (
         <div className="fixed flex justify-center items-center inset-0 bg-[var(--surface)]/70 z-100000 backdrop-blur-sm">
             <div className="flex flex-col gap-6 w-[80%] max-w-[500px] p-4 bg-white text-[var(--secondary-text)]">
