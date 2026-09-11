@@ -7,11 +7,15 @@ import {getUserProfilePictureURL} from "../../services/storage.js"
 
 
 export default function ProfilePictureModal({closeModal}){
-    const {currentUser} = useAuth();
+    const {currentUser, refreshProfile} = useAuth();
     const [profilePicture, setProfilePicture] = useState(null)
+    const [profilePicturePreview, setProfilePicturePreview] = useState(null)
 
     function addProfilePicture(e){
+        const picturePreview = URL.createObjectURL(e.target.files[0])
         setProfilePicture(e.target.files[0])
+        setProfilePicturePreview(picturePreview)
+
     }
 
     async function uploadPhoto(){
@@ -19,8 +23,10 @@ export default function ProfilePictureModal({closeModal}){
             return
         }
         await upload(profilePicture, currentUser)
-        const profilePicture = getUserProfilePictureURL(currentUser)
+        const profilePictureURL = await getUserProfilePictureURL(currentUser)
        await updateProfilePicture(currentUser.uid, profilePictureURL)
+        await refreshProfile();
+        closeModal()
     }
 
     return (
@@ -31,17 +37,17 @@ export default function ProfilePictureModal({closeModal}){
                     <X onClick={closeModal} className="cursor-pointer hover:bg-[var(--surface)] hover:text-[var(--primary-text)] transform-all duration-200"/>
                 </div>
                 <div> 
-                    <label className="block cursor-pointer rounded-xl border border-dashed p-6 text-center">
+                   { profilePicturePreview ? <div><img src={profilePicturePreview} alt="Profile picture preview" /></div> : <label className="block cursor-pointer rounded-xl border border-dashed p-6 text-center">
                          <div className="flex flex-col justify-center items-center gap-2 py-4">
                             <p className="text-lg">Choose an image</p>
                             <ImageUp/>
                             <p className="text-sm">PNG, JPG, WEBP</p>
                          </div>
                         <input onChange={addProfilePicture} type="file" accept="image/png, image/jpeg, image/webp" className="hidden"/>
-                    </label>
+                    </label>}
                 </div>
                 <div className="flex gap-2 self-end">
-                    <button onClick={uploadPhoto} className="bg-[var(--accent)] text-[var(--primary-text)]/80 hover:bg-[var(--accent)]/80 active:scale-98 p-1 rounded-sm cursor-pointer">Upload</button>
+                    <button onClick={uploadPhoto} className="bg-[var(--accent)] text-[var(--primary-text)]/80 hover:bg-[var(--accent)]/80 active:scale-98 p-1 rounded-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" disabled={!profilePicturePreview}>Upload</button>
                     <button onClick={closeModal} className="bg-[var(--accent)] text-[var(--primary-text)]/80 hover:bg-[var(--accent)]/80 active:scale-98 p-1 rounded-sm cursor-pointer" >Cancel</button>
                 </div>
 

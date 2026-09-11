@@ -21,6 +21,12 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  async function refreshProfile(){
+    const updatedProfile = await getUserDocument(currentUser.uid);
+    setUserProfile(updatedProfile);
+    
+  }
+
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
@@ -55,6 +61,7 @@ export function AuthProvider({ children }) {
     logOut,
     signUp,
     isLoading,
+    refreshProfile,
   };
 
   return (
