@@ -19,14 +19,12 @@ export async function getAPI(endpoint) {
   }
 }
 
-export async function getUpcomingMovies(){
-  const moviesPage1 = await getAPI("movie/upcoming?language=en-US&page=1")
-  const moviesPage2 = await getAPI("movie/upcoming?language=en-US&page=2")
-  const moviesPage3 = await getAPI("movie/upcoming?language=en-US&page=3")
-  const moviesPage4 = await getAPI("movie/upcoming?language=en-US&page=4")
-  const moviesPage5 = await getAPI("movie/upcoming?language=en-US&page=5")
-
-
+export async function getUpcomingMovies() {
+  const moviesPage1 = await getAPI("movie/upcoming?language=en-US&page=1");
+  const moviesPage2 = await getAPI("movie/upcoming?language=en-US&page=2");
+  const moviesPage3 = await getAPI("movie/upcoming?language=en-US&page=3");
+  const moviesPage4 = await getAPI("movie/upcoming?language=en-US&page=4");
+  const moviesPage5 = await getAPI("movie/upcoming?language=en-US&page=5");
 
   const currentDate = new Date();
   const movies = [
@@ -35,26 +33,28 @@ export async function getUpcomingMovies(){
     ...moviesPage3.results,
     ...moviesPage4.results,
     ...moviesPage5.results,
-
-
-  ]
+  ];
 
   // API gave duplicate movies. This filters them out.
   const uniqueMovies = movies.filter((movie, index, self) => {
-    return index === self.findIndex((otherMovie) => otherMovie.id === movie.id)
-  })
-
-
-  
-  const upcomingMoviesObject = uniqueMovies.filter((movie) => { const releaseDate = new Date(movie?.release_date); return (currentDate <= releaseDate)}).map((movie) => {
-    return {
-      id: movie.id,
-      poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`, 
-      backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
-      title: movie.title,
-
-    }
+    return index === self.findIndex((otherMovie) => otherMovie.id === movie.id);
   });
+
+  console.log(movies);
+
+  const upcomingMoviesObject = uniqueMovies
+    .filter((movie) => {
+      const releaseDate = new Date(movie?.release_date);
+      return currentDate <= releaseDate;
+    })
+    .map((movie) => {
+      return {
+        id: movie.id,
+        poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+        backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
+        title: movie.title,
+      };
+    });
   return upcomingMoviesObject;
 }
 
@@ -114,18 +114,18 @@ export async function getMovieDetails(movieId) {
     releaseDate: movie.release_date,
     runtime: movie.runtime,
   };
+  console.log(movieDetailedData);
   return movieDetailedData;
 }
 
-export async function getCastMembers(castId){
-  const castMember = await getAPI(`person/${castId}`); 
+export async function getCastDetails(castId) {
+  const castMember = await getAPI(`person/${castId}`);
 
-  const castDetails = {
+  const castData = {
     id: castMember.id,
-    aka: castMember.also_known_as,
     biography: castMember.biography,
     birthday: castMember.birthday,
-    birthPlace: castMember.place_of_birth,
-  }
-  console.log(castMember) 
+  };
+
+  console.log(castData);
 }

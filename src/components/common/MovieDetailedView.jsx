@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router";
 import { useState, useEffect, useRef } from "react";
-import { getMovieDetails, getCastMembers } from "../../services/tmdb.js";
+import { getMovieDetails, getCastDetails } from "../../services/tmdb.js";
 import {
   addMovieToWatchList,
   deleteMovieFromWatchList,
@@ -31,7 +31,8 @@ export default function MovieDetailedView() {
   const [isOverviewOverflowing, setIsOverviewOverflowing] = useState(false);
   const [showFullOverview, setShowFullOverview] = useState(false);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
-  const [showCastModal, setShowCastModal] = useState(true)
+  const [showCastModal, setShowCastModal] = useState(false);
+  const [castMemberId, setCastMemberId] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const overviewRef = useRef(null);
@@ -47,6 +48,16 @@ export default function MovieDetailedView() {
 
   function openModal() {
     setShowTrailerModal(true);
+  }
+
+  // Close & open cast modal views
+  function closeCastModal() {
+    setShowCastModal(false);
+    setCastMemberId(null);
+  }
+  function openCastModal(id) {
+    setCastMemberId(id);
+    setShowCastModal(true);
   }
 
   function toggleFavoriteMovie() {
@@ -213,9 +224,9 @@ export default function MovieDetailedView() {
                 {movieDetails?.cast.map((actor) => {
                   return (
                     <div
-                    onClick={() => getCastMembers(actor.id)}
+                      onClick={() => openCastModal(actor.id)}
                       key={actor.id}
-                      className="flex flex-col items-center w-[110px] shrink-0 snap-start"
+                      className="flex flex-col items-center w-[110px] shrink-0 snap-start cursor-pointer"
                     >
                       {actor.picture ? (
                         <img
@@ -260,7 +271,11 @@ export default function MovieDetailedView() {
           closeModal={closeModal}
         />
       )}
-      {showCastModal && <CastMemberModal/>}
+      <CastMemberModal
+        showCastModal={showCastModal}
+        closeCastModal={closeCastModal}
+        castMemberId={castMemberId}
+      />
     </main>
   );
 }
