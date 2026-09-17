@@ -230,7 +230,7 @@ export default function MovieDetailedView() {
                     >
                       {actor.picture ? (
                         <img
-                          className="w-[75px] h-[75px] rounded-2xl object-cover"
+                          className="w-[100px] h-[100px] rounded-2xl object-cover"
                           src={actor.picture}
                           alt={`${actor.castName} photo`}
                         />
@@ -238,12 +238,12 @@ export default function MovieDetailedView() {
                         <div className="border border-[var(--accent)] rounded-2xl">
                           <User
                             size={30}
-                            className="w-[60px] h-[60px] rounded-2xl"
+                            className="w-[90px] h-[90px] rounded-2xl"
                           />
                         </div>
                       )}
-                      <div>
-                        <p className="text-center">{actor.castName}</p>
+                      <div className="flex flex-col justify-center items-center">
+                        <p className="text-center truncate w-[80px]">{actor.castName}</p>
                         <div>
                           <p className="text-center text-sm text-[var(--primary-text)]/60 line-clamp-2">
                             {actor.character}
