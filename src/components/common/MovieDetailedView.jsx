@@ -1,6 +1,6 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useState, useEffect, useRef } from "react";
-import { getMovieDetails } from "../../services/tmdb.js";
+import { getMovieDetails, getCastMembers } from "../../services/tmdb.js";
 import {
   addMovieToWatchList,
   deleteMovieFromWatchList,
@@ -18,17 +18,20 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import TrailerModal from "./TrailerModal.jsx";
+import CastMemberModal from "./CastMemberModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();
   const { watchListMovies, removeFromWatchList, addToWatchList } =
     useWatchList();
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const [movieDetails, setMovieDetails] = useState();
   const [isOverviewOverflowing, setIsOverviewOverflowing] = useState(false);
   const [showFullOverview, setShowFullOverview] = useState(false);
   const [showTrailerModal, setShowTrailerModal] = useState(false);
+  const [showCastModal, setShowCastModal] = useState(true)
   const [isFavorite, setIsFavorite] = useState(false);
 
   const overviewRef = useRef(null);
@@ -210,6 +213,7 @@ export default function MovieDetailedView() {
                 {movieDetails?.cast.map((actor) => {
                   return (
                     <div
+                    onClick={() => getCastMembers(actor.id)}
                       key={actor.id}
                       className="flex flex-col items-center w-[110px] shrink-0 snap-start"
                     >
@@ -256,6 +260,7 @@ export default function MovieDetailedView() {
           closeModal={closeModal}
         />
       )}
+      {showCastModal && <CastMemberModal/>}
     </main>
   );
 }

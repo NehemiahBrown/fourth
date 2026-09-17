@@ -44,7 +44,6 @@ export async function getUpcomingMovies(){
     return index === self.findIndex((otherMovie) => otherMovie.id === movie.id)
   })
 
-  console.log(movies)
 
   
   const upcomingMoviesObject = uniqueMovies.filter((movie) => { const releaseDate = new Date(movie?.release_date); return (currentDate <= releaseDate)}).map((movie) => {
@@ -100,7 +99,7 @@ export async function getMovieDetails(movieId) {
     cast: movie.credits.cast
       .map((castMember) => {
         return {
-          id: castMember.cast_id,
+          id: castMember.id,
           character: castMember.character,
           castName: castMember.name,
           picture: castMember.profile_path
@@ -116,4 +115,17 @@ export async function getMovieDetails(movieId) {
     runtime: movie.runtime,
   };
   return movieDetailedData;
+}
+
+export async function getCastMembers(castId){
+  const castMember = await getAPI(`person/${castId}`); 
+
+  const castDetails = {
+    id: castMember.id,
+    aka: castMember.also_known_as,
+    biography: castMember.biography,
+    birthday: castMember.birthday,
+    birthPlace: castMember.place_of_birth,
+  }
+  console.log(castMember) 
 }
