@@ -75,3 +75,19 @@ export async function getMovieWatchListDocs(uid) {
     return movie.data();
   });
 }
+
+export async function addMovieToFavorites(uid, movieData){
+  await setDoc(doc(db, "users", uid, "favoriteMovies", String(movieData.id)), {
+    ...movieData
+  })}
+
+
+export async function getFavoriteMoviesDoc(uid){
+
+  const q = query(collection(db, "users", uid, "favoriteMovies"));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    return doc.data()
+  });
+}

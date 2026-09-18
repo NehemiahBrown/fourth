@@ -21,7 +21,6 @@ export default function CastMemberModal({
     fetchCastData();
   }, [castMemberId]);
 
-  console.log(castMemberDetails);
   return (
     <main
       className={`${showCastModal ? "translate-y-0" : "translate-y-full"} overflow-y-scroll fixed inset-0 z-1000 bg-[var(--background)] transition-transform duration-300`}

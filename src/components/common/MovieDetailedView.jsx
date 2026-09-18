@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { getMovieDetails, getCastDetails } from "../../services/tmdb.js";
 import {
   addMovieToWatchList,
+  addMovieToFavorites,
   deleteMovieFromWatchList,
 } from "../../services/firestore.js";
 
@@ -41,7 +42,7 @@ export default function MovieDetailedView() {
   const isInWatchList = watchListMovies.some(
     (movie) => movie.id === movieDetails?.id,
   );
-
+  // Close and open trailer modal
   function closeModal() {
     setShowTrailerModal(false);
   }
@@ -127,7 +128,7 @@ export default function MovieDetailedView() {
   }
 
   return (
-    <main className="h-dvh">
+    <main className="min-h-dvh">
       <div className="relative ">
         <img
           src={movieDetails?.backdrop}
@@ -163,7 +164,7 @@ export default function MovieDetailedView() {
             className="h-[250px] max-w-[400px]"
           />
         </div>
-        <div className="flex flex-col gap-2 px-3 py-4 min-w-0 flex-1">
+        <div className="flex flex-col gap-2 px-3 py-6 min-w-0 flex-1">
           <div className="flex gap-2">
             <button
               onClick={addOrRemoveFromWatchList}
@@ -179,7 +180,18 @@ export default function MovieDetailedView() {
               />
               Watchlist
             </button>
-
+            <button
+              onClick={toggleFavoriteMovie}
+              className="flex items-center gap-2 px-3 
+                      py-2
+                      rounded-lg
+                      border border-[var(--accent-dark)]
+                      hover:bg-[var(--accent-dark)] active:scale-95
+                      transition-all duration-200 cursor-pointer"
+            >
+              <Heart size={18} className={isFavorite ? "fill-current" : ""} />
+              Favorite
+            </button>
             <button
               onClick={toggleFavoriteMovie}
               className="flex items-center gap-2 px-3 
@@ -193,7 +205,7 @@ export default function MovieDetailedView() {
               Favorite
             </button>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col mt-4">
             <p className="text-lg md:text-xl font-bold">Overview :</p>
             <p
               ref={overviewRef}

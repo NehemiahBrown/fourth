@@ -30,7 +30,7 @@ export default function MobileNav() {
           `flex flex-col items-center active:scale-95 text-sm ${isActive ? "text-[var(--accent)]" : "text-[var(--primary-text)]"}`
         }
       >
-        <CircleUserRound size={30} />
+        < Users size={30} />
         Friends
       </NavLink>
       <NavLink
@@ -39,7 +39,7 @@ export default function MobileNav() {
           `flex flex-col items-center active:scale-95 text-sm ${isActive ? "text-[var(--accent)]" : "text-[var(--primary-text)]"}`
         }
       >
-        <Users size={30} />
+        <CircleUserRound size={30} />
         Profile
       </NavLink>
     </div>
