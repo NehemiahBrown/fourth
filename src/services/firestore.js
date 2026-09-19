@@ -76,6 +76,13 @@ export async function getMovieWatchListDocs(uid) {
   });
 }
 
+// Favorites Documents
+
+export async function deleteMovieFromFavorites(uid, movieId){
+  const favoriteMovieDocRef = doc(db, "users", uid, "favoriteMovies", String(movieId))
+  await deleteDoc(favoriteMovieDocRef)
+}
+
 export async function addMovieToFavorites(uid, movieData){
   await setDoc(doc(db, "users", uid, "favoriteMovies", String(movieData.id)), {
     ...movieData

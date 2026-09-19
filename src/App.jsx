@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { WatchListProvider } from "./context/WatchListContext.jsx";
+import { FavoriteMoviesProvider } from "./context/FavoriteMoviesContext.jsx"
 import { AuthRequired } from "./layouts/AuthRequired.jsx";
 
 import SignUp from "./components/auth/SignUp";
@@ -21,6 +22,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <WatchListProvider>
+          <FavoriteMoviesProvider>
           <Routes>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Landing />} />
@@ -37,6 +39,7 @@ export default function App() {
               </Route>
             </Route>
           </Routes>
+          </FavoriteMoviesProvider>
         </WatchListProvider>
       </AuthProvider>
     </BrowserRouter>

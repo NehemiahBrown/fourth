@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import { getMovieDetails, getCastDetails } from "../../services/tmdb.js";
 import {
   addMovieToWatchList,
-  addMovieToFavorites,
   deleteMovieFromWatchList,
+  addMovieToFavorites,
+  deleteMovieFromFavorites
 } from "../../services/firestore.js";
 
 import { useWatchList } from "../../context/WatchListContext.jsx";
+import { useFavoriteMovies } from "../../context/FavoriteMoviesContext.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 import {
@@ -23,10 +25,12 @@ import CastMemberModal from "./CastMemberModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();
-  const { watchListMovies, removeFromWatchList, addToWatchList } =
-    useWatchList();
-  const { currentUser } = useAuth();
   const navigate = useNavigate();
+
+  
+  const { watchListMovies, removeFromWatchList, addToWatchList } = useWatchList();
+  const {favoriteMovies, fetchFavoriteMovies, addFavoriteMovie, removeFavoriteMovie,} = useFavoriteMovies();
+  const { currentUser } = useAuth();
 
   const [movieDetails, setMovieDetails] = useState();
   const [isOverviewOverflowing, setIsOverviewOverflowing] = useState(false);
@@ -41,6 +45,10 @@ export default function MovieDetailedView() {
 
   const isInWatchList = watchListMovies.some(
     (movie) => movie.id === movieDetails?.id,
+  );
+
+  const isInMovieFavorites = favoriteMovies.some(
+    (movie) => movie.id === movieDetails?.id
   );
   // Close and open trailer modal
   function closeModal() {
@@ -61,10 +69,6 @@ export default function MovieDetailedView() {
     setShowCastModal(true);
   }
 
-  function toggleFavoriteMovie() {
-    setIsFavorite((current) => !current);
-  }
-
   function addOrRemoveFromWatchList() {
     if (!isInWatchList) {
       // adding to state
@@ -76,6 +80,16 @@ export default function MovieDetailedView() {
       removeFromWatchList(movieDetails);
       //deleting from firestore
       deleteMovieFromWatchList(currentUser.uid, movieDetails?.id);
+    }
+  }
+
+  function addOrRemoveFromFavorites(){
+    if(!isInMovieFavorites){
+      addFavoriteMovie(movieDetails)
+      addMovieToFavorites(currentUser.uid, movieDetails)
+    } else if (isInMovieFavorites){
+      removeFavoriteMovie(movieDetails);
+      deleteMovieFromFavorites(currentUser.uid, movieDetails?.id)
     }
   }
 
@@ -181,7 +195,7 @@ export default function MovieDetailedView() {
               Watchlist
             </button>
             <button
-              onClick={toggleFavoriteMovie}
+              onClick={addOrRemoveFromFavorites}
               className="flex items-center gap-2 px-3 
                       py-2
                       rounded-lg
@@ -189,19 +203,10 @@ export default function MovieDetailedView() {
                       hover:bg-[var(--accent-dark)] active:scale-95
                       transition-all duration-200 cursor-pointer"
             >
-              <Heart size={18} className={isFavorite ? "fill-current" : ""} />
-              Favorite
-            </button>
-            <button
-              onClick={toggleFavoriteMovie}
-              className="flex items-center gap-2 px-3 
-                      py-2
-                      rounded-lg
-                      border border-[var(--accent-dark)]
-                      hover:bg-[var(--accent-dark)] active:scale-95
-                      transition-all duration-200 cursor-pointer"
-            >
-              <Heart size={18} className={isFavorite ? "fill-current" : ""} />
+              <Heart 
+                size={18} 
+                className={isInMovieFavorites ? "fill-current" : ""} 
+              />
               Favorite
             </button>
           </div>

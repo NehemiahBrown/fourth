@@ -1,17 +1,17 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext.jsx";
 
-import { getFavoriteMoviesDocs } from "../../services/firestore.js"
+import { getFavoriteMoviesDoc } from "../services/firestore.js"
 
 const FavoriteMoviesContext = createContext();
 
-export function useLikedMovies(){
+export function useFavoriteMovies(){
     return useContext(FavoriteMoviesContext)
 }
 
-export default function LikedMoviesProvider({children}){ 
+export function FavoriteMoviesProvider({children}){ 
     const [favoriteMovies, setFavoriteMovies] = useState([])
-   const { currentUser } = useAuth();
+    const { currentUser } = useAuth();
 
     useEffect(() => {
         async function fetchFavoriteMovies() {
@@ -21,8 +21,8 @@ export default function LikedMoviesProvider({children}){
             } else {
                 setFavoriteMovies([])
             }
-        }
-       fetchFavoriteMovies()
+            fetchFavoriteMovies()
+        } 
     }, [currentUser])
 
     function addFavoriteMovie(movie){
@@ -37,7 +37,7 @@ export default function LikedMoviesProvider({children}){
     }
 
     const favoriteMoviesData = {
-        fetchFavoriteMovies, 
+        favoriteMovies, 
         addFavoriteMovie, 
         removeFavoriteMovie, 
     }
