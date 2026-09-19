@@ -84,10 +84,10 @@ export async function addMovieToFavorites(uid, movieData){
 
 export async function getFavoriteMoviesDoc(uid){
 
-  const q = query(collection(db, "users", uid, "favoriteMovies"));
-
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    return doc.data()
-  });
+  const favoriteMoviesDoc = await getDocs(
+    collection(db, "users", uid, "favoriteMovies"));
+  
+  return favoriteMoviesDoc.docs.map((movie) => {
+      return movie.data()
+  })
 }
