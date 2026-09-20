@@ -40,7 +40,6 @@ export async function getUpcomingMovies() {
     return index === self.findIndex((otherMovie) => otherMovie.id === movie.id);
   });
 
-
   const upcomingMoviesObject = uniqueMovies
     .filter((movie) => {
       const releaseDate = new Date(movie?.release_date);
@@ -83,6 +82,7 @@ export async function getMovieDetails(movieId) {
   const trailer = movie.videos.results.find(
     (video) => video.site === "YouTube" && video.type === "Trailer",
   );
+  
   const movieDetailedData = {
     id: movie.id,
     title: movie.title,
@@ -119,17 +119,18 @@ export async function getMovieDetails(movieId) {
 export async function getCastDetails(castId) {
   const castMember = await getAPI(`person/${castId}`);
 
-  const castData = {
-    id: castMember.id,
-    name: castMember.name,
-    biography: castMember.biography,
-    picture: castMember.profile_path
-    ? `https://image.tmdb.org/t/p/w500${castMember.profile_path}`
-    : null,
-    birthday: castMember.birthday,
-    birthplace: castMember.place_of_birth,
 
-  };
-console.log(castData)
+   const castData =
+        {
+          id: castMember.id,
+          name: castMember.name,
+          biography: castMember.biography,
+          picture: castMember.profile_path
+          ? `https://image.tmdb.org/t/p/w500${castMember.profile_path}`
+          : null,
+          birthday: castMember.birthday,
+          birthplace: castMember.place_of_birth,
+        }
+     
   return castData;
 }

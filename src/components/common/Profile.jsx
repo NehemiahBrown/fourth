@@ -2,6 +2,8 @@ import UserAvatar from "../../assets/userAvatar.png"
 import ProfilePictureModal from "./ProfilePictureModal.jsx"
 
 import { useAuth } from "../../context/AuthContext.jsx";
+import {useFavoriteMovies } from "../../context/FavoriteMoviesContext.jsx"
+import {useWatchList} from "../../context/WatchListContext.jsx"
 import {useState, useEffect} from "react";
 
 import { Camera } from "lucide-react"

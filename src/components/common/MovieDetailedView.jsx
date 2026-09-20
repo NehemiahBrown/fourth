@@ -143,7 +143,7 @@ export default function MovieDetailedView() {
 
   return (
     <main className="min-h-dvh">
-      <div className="relative ">
+      <div className="-mx-4 -mt-4 relative ">
         <img
           src={movieDetails?.backdrop}
           alt={`${movieDetails?.title} backdrop.`}
@@ -156,7 +156,7 @@ export default function MovieDetailedView() {
             <div className="flex gap-2">
               <p>{movieDetails?.releaseYear}</p>
               <p>·</p>
-              <p>{`${Math.floor(Math.round(movieDetails?.runtime / 60))}h ${movieDetails?.runtime % 60}m`}</p>
+              <p>{`${Math.floor(movieDetails?.runtime / 60)}h ${movieDetails?.runtime % 60}m`}</p>
             </div>
             <p className="flex gap-2">{movieDetails?.genres.join(" · ")}</p>
           </div>
@@ -230,7 +230,7 @@ export default function MovieDetailedView() {
             <div className="mt-4 relative">
               <button
                 onClick={scrollLeft}
-                className="absolute carouselArrow top-0 h-[75px] left-2 z-10 opacity-0 active:scale-95 cursor-pointer"
+                className="hidden md:block absolute carouselArrow top-0 h-[75px] left-2 z-10 opacity-0 active:scale-95 cursor-pointer"
               >
                 <ChevronLeft size={40} />
               </button>
@@ -242,7 +242,7 @@ export default function MovieDetailedView() {
                   return (
                     <div
                       onClick={() => openCastModal(actor.id)}
-                      key={actor.id}
+                      key={actor.id + " as " + actor.character}
                       className="flex flex-col items-center w-[110px] shrink-0 snap-start cursor-pointer"
                     >
                       {actor.picture ? (
@@ -273,7 +273,7 @@ export default function MovieDetailedView() {
               </div>
               <button
                 onClick={scrollRight}
-                className="absolute carouselArrow top-0 right-2 h-[75px] z-10 opacity-0 active:scale-95 cursor-pointer"
+                className="hidden md:block absolute carouselArrow top-0 right-2 h-[75px] z-10 opacity-0 active:scale-95 cursor-pointer"
               >
                 <ChevronRight size={40} />
               </button>
