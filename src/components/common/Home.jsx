@@ -14,7 +14,6 @@ export default function Home() {
 
   const navigate = useNavigate();
 
-
   //   Get trending movie data
   useEffect(() => {
     const fetchData = async () => {
@@ -28,10 +27,10 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       const upcomingMoviesData = await getUpcomingMovies();
-      setUpcomingMovies(upcomingMoviesData)
-    }
-    fetchData()
-  }, [])
+      setUpcomingMovies(upcomingMoviesData);
+    };
+    fetchData();
+  }, []);
 
   //   Carousel scroll functions
   function scrollLeft(carouselRef) {
@@ -62,10 +61,12 @@ export default function Home() {
           className="h-[35px] w-full pl-[8px] bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)] rounded-md"
           placeholder="Search movies, actors, directors..."
         />
-        <Search className="absolute -translate-y-1/2 top-[50%] right-[12px]" />
+        <Search
+          size={20}
+          className="absolute -translate-y-1/2 top-[50%] right-[15px]"
+        />
       </div>
       <div className="flex flex-col gap-6 mt-6">
-        
         <div className="flex flex-col gap-4">
           <div>
             <p className="text-lg font-bold">Trending Right Now</p>
@@ -139,7 +140,6 @@ export default function Home() {
               <ChevronRight size={80} />
             </button>
           </div>
-
         </div>
         <div className="flex flex-col gap-4">
           <div>

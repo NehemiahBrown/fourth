@@ -7,18 +7,21 @@ import {
   deleteDoc,
   updateDoc,
   collection,
+  query,
+  where,
+  limit,
   serverTimestamp,
 } from "firebase/firestore";
-import {getUserProfilePictureURL} from "./storage.js"
+import { getUserProfilePictureURL } from "./storage.js";
 
-
-export async function updateProfilePicture(uid, picture){
+export async function updateProfilePicture(uid, picture) {
   const userDocRef = doc(db, "users", uid);
 
   await updateDoc(userDocRef, {
-    profilePicture: picture
+    profilePicture: picture,
   });
 }
+
 // User Documents
 export async function createUserDocument(uid, userData) {
   await setDoc(doc(db, "users", uid), {
@@ -37,7 +40,6 @@ export async function getUserDocument(uid) {
     console.log("No document exists.");
   }
 }
-
 
 // Watchlist Documents
 export async function addMovieToWatchList(uid, movieData) {
@@ -76,25 +78,38 @@ export async function getMovieWatchListDocs(uid) {
   });
 }
 
-// Favorites Documents
-
-export async function deleteMovieFromFavorites(uid, movieId){
-  const favoriteMovieDocRef = doc(db, "users", uid, "favoriteMovies", String(movieId))
-  await deleteDoc(favoriteMovieDocRef)
+// Favorite movie documents
+export async function addMovieToFavorites(uid, movieData) {
+  await setDoc(doc(db, "users", uid, "favoriteMovies", String(movieData.id)), {
+    ...movieData,
+  });
 }
 
-export async function addMovieToFavorites(uid, movieData){
-  await setDoc(doc(db, "users", uid, "favoriteMovies", String(movieData.id)), {
-    ...movieData
-  })}
-
-
-export async function getFavoriteMoviesDoc(uid){
-
+export async function getFavoriteMoviesDoc(uid) {
   const favoriteMoviesDoc = await getDocs(
-    collection(db, "users", uid, "favoriteMovies"));
-  
+    collection(db, "users", uid, "favoriteMovies"),
+  );
+
   return favoriteMoviesDoc.docs.map((movie) => {
-      return movie.data()
-  })
+    return movie.data();
+  });
+}
+
+//Friends Documents
+export async function findAFriend(userName) {
+  const userNameQuery = query(
+    collection(db, "users"),
+    where("userNameLower", ">=", userName.toLowerCase()),
+    where("userNameLower", "<=", userName.toLowerCase() + "\uf8ff"),
+    limit(10),
+  );
+
+  const matchingUserNames = await getDocs(userNameQuery);
+
+  return matchingUserNames.docs.map((friend) => {
+    return {
+      uid: friend.id,
+      ...friend.data(),
+    };
+  });
 }

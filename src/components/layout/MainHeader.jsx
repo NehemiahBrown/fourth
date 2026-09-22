@@ -5,6 +5,7 @@ import { useNavigate, NavLink } from "react-router";
 import { X } from "lucide-react";
 import { useClickOutside } from "../../hooks/clickOutsideDiv.js";
 import FourthLogoHorz from "../../assets/fourthlogohorz.png";
+import UserAvatar from "../../assets/userAvatar.png";
 
 export default function MainHeader() {
   const [dropDownOpen, setDropDownOpen] = useState(false);
@@ -49,12 +50,16 @@ export default function MainHeader() {
         className="relative flex items-center justify-center border-2 border-[var(--accent-dark)] rounded-full cursor-pointer"
       >
         <button className="w-[45px] h-[45px] md:w-[50px] md:h-[50px] rounded-full cursor-pointer">
-          <img className="w-full h-full rounded-full object-cover" src={userProfile?.profilePicture} alt="" />
+          <img
+            className="w-full h-full rounded-full object-cover"
+            src={`${userProfile?.profilePicture ? userProfile?.profilePicture : UserAvatar}`}
+            alt=""
+          />
         </button>
         {dropDownOpen && (
           <div className="fixed sm:absolute sm:right-full bg-[var(--surface)] top-0 sm:top-8 left-0 sm:left-auto w-[100vw] sm:w-[400px] h-[100dvh] sm:h-auto z-20000 rounded-lg">
             <div className="sm:hidden flex justify-end">
-              <X className="mt-4 mr-2"/>
+              <X className="mt-4 mr-2" />
             </div>
             <NavLink
               to="/profile"

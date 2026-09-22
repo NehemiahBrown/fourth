@@ -1,11 +1,9 @@
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 import { useState, useEffect, useRef } from "react";
-import { getMovieDetails, getCastDetails } from "../../services/tmdb.js";
+import { getMovieDetails } from "../../services/tmdb.js";
 import {
   addMovieToWatchList,
   deleteMovieFromWatchList,
-  addMovieToFavorites,
-  deleteMovieFromFavorites
 } from "../../services/firestore.js";
 
 import { useWatchList } from "../../context/WatchListContext.jsx";
@@ -25,11 +23,8 @@ import CastMemberModal from "./CastMemberModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();
-  const navigate = useNavigate();
-
-  
-  const { watchListMovies, removeFromWatchList, addToWatchList } = useWatchList();
-  const {favoriteMovies, fetchFavoriteMovies, addFavoriteMovie, removeFavoriteMovie,} = useFavoriteMovies();
+  const { watchListMovies, removeFromWatchList, addToWatchList } =
+    useWatchList();
   const { currentUser } = useAuth();
 
   const [movieDetails, setMovieDetails] = useState();
@@ -45,10 +40,6 @@ export default function MovieDetailedView() {
 
   const isInWatchList = watchListMovies.some(
     (movie) => movie.id === movieDetails?.id,
-  );
-
-  const isInMovieFavorites = favoriteMovies.some(
-    (movie) => movie.id === movieDetails?.id
   );
   // Close and open trailer modal
   function closeModal() {
@@ -80,16 +71,6 @@ export default function MovieDetailedView() {
       removeFromWatchList(movieDetails);
       //deleting from firestore
       deleteMovieFromWatchList(currentUser.uid, movieDetails?.id);
-    }
-  }
-
-  function addOrRemoveFromFavorites(){
-    if(!isInMovieFavorites){
-      addFavoriteMovie(movieDetails)
-      addMovieToFavorites(currentUser.uid, movieDetails)
-    } else if (isInMovieFavorites){
-      removeFavoriteMovie(movieDetails);
-      deleteMovieFromFavorites(currentUser.uid, movieDetails?.id)
     }
   }
 
@@ -203,10 +184,19 @@ export default function MovieDetailedView() {
                       hover:bg-[var(--accent-dark)] active:scale-95
                       transition-all duration-200 cursor-pointer"
             >
-              <Heart 
-                size={18} 
-                className={isInMovieFavorites ? "fill-current" : ""} 
-              />
+              <Heart size={18} className={isFavorite ? "fill-current" : ""} />
+              Favorite
+            </button>
+            <button
+              onClick={toggleFavoriteMovie}
+              className="flex items-center gap-2 px-3 
+                      py-2
+                      rounded-lg
+                      border border-[var(--accent-dark)]
+                      hover:bg-[var(--accent-dark)] active:scale-95
+                      transition-all duration-200 cursor-pointer"
+            >
+              <Heart size={18} className={isFavorite ? "fill-current" : ""} />
               Favorite
             </button>
           </div>
@@ -260,7 +250,9 @@ export default function MovieDetailedView() {
                         </div>
                       )}
                       <div className="flex flex-col justify-center items-center">
-                        <p className="text-center truncate w-[80px]">{actor.castName}</p>
+                        <p className="text-center truncate w-[80px]">
+                          {actor.castName}
+                        </p>
                         <div>
                           <p className="text-center text-sm text-[var(--primary-text)]/60 line-clamp-2">
                             {actor.character}
