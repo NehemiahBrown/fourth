@@ -5,7 +5,6 @@ export default function SeeAllFavorites({
   showAllFavorites,
   closeFavoritesModal,
 }) {
-  console.log(userData);
   const navigate = useNavigate();
 
   return (

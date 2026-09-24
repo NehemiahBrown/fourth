@@ -35,7 +35,14 @@ export default function SearchedUserProfile() {
       });
       return counts;
     }, {});
-  });
+
+    if(genreCounts){
+      const favoriteGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]).slice(0, 3)
+      setTopGenres(favoriteGenres)
+    }
+
+  }, [userData?.favorites]);
+
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -103,7 +110,7 @@ export default function SearchedUserProfile() {
             See All <ChevronRight />
           </button>
         </div>
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 mt-8">
           {userData?.favorites?.map((movie, index) => {
             return (
               <div
@@ -119,7 +126,29 @@ export default function SearchedUserProfile() {
             );
           })}
         </div>
-        <div></div>
+        <section className="mt-8">
+          <div>
+            <p className="text-xl font-bold">Top Genres</p>
+          </div>
+          <div className="mt-2">
+            {
+              topGenres.map((genre) =>{
+                const totalFavoriteMovies = userData?.favorites?.length;
+                const percentage = Math.floor(genre[1] / totalFavoriteMovies * 100);
+          
+                return (
+                  <div key={genre[0]} className="w-full md:max-w-2xl">
+                    <div className="flex items-center justify-between">
+                      <p>{genre[0]}</p>
+                      <p>{`${percentage}%`}</p>
+                    </div>
+                    <progress className="w-full genre-progressBar" value={percentage} max={100}/>
+                  </div>
+                )
+              })
+            }
+          </div>
+        </section>
       </div>
       <SeeAllFavorites
         userData={userData}

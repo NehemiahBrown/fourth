@@ -48,3 +48,30 @@ body {
     opacity: 100;
   }
 }
+
+/* Progress Bar Container */
+.genre-progressBar {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;
+}
+
+/* Track background (Chrome, Safari, Opera, Edge) */
+.genre-progressBar::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 10px;
+}
+
+/* Progress fill (Chrome, Safari, Opera, Edge) */
+.genre-progressBar::-webkit-progress-value {
+  background-color: var(--accent-dark);
+  border-radius: 10px;
+  transition: width 0.3s ease; /* Adds smooth transition */
+}
+
+/* Progress fill (Firefox) */
+.genre-progressBar::-moz-progress-bar {
+  background-color: var(--accent-dark);
+  border-radius: 10px;
+}
