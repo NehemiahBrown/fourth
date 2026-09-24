@@ -14,6 +14,7 @@ export default function SearchedUserProfile() {
   const [userData, setUserData] = useState({});
   const [friends, setFriends] = useState([]);
   const [showAllFavorites, setShowAllFavorites] = useState(false);
+  const [topGenres, setTopGenres] = useState([]);
 
   function openFavoritesModal() {
     setShowAllFavorites(true);
@@ -22,6 +23,19 @@ export default function SearchedUserProfile() {
   function closeFavoritesModal() {
     setShowAllFavorites(false);
   }
+
+  useEffect(() => {
+    const genreCounts = userData?.favorites?.reduce((counts, movie) => {
+      movie.genres.forEach((genre) => {
+        if (counts[genre]) {
+          counts[genre] = counts[genre] + 1;
+        } else {
+          counts[genre] = 1;
+        }
+      });
+      return counts;
+    }, {});
+  });
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -105,6 +119,7 @@ export default function SearchedUserProfile() {
             );
           })}
         </div>
+        <div></div>
       </div>
       <SeeAllFavorites
         userData={userData}
