@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import {
   getUserDocument,
@@ -6,10 +6,11 @@ import {
   getMovieWatchListDocs,
 } from "../../services/firestore.js";
 
-import { Ellipsis, ChevronRight } from "lucide-react";
+import { Ellipsis, ChevronRight, ChevronLeft } from "lucide-react";
 import SeeAllFavorites from "./SeeAllFavorites.jsx";
 export default function SearchedUserProfile() {
   const { userId } = useParams();
+  const navigate = useNavigate()
 
   const [userData, setUserData] = useState({});
   const [friends, setFriends] = useState([]);
@@ -65,7 +66,8 @@ export default function SearchedUserProfile() {
 
   return (
     <main>
-      <div className="flex gap-4">
+      <button onClick={() => navigate(-1)} className="inline-block bg-[var(--surface)] p-1 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"><ChevronLeft size={30}/></button>
+      <div className="ml-6 flex gap-4">
         <div className="mt-2">
           <img
             src={userData?.user?.profilePicture}
@@ -86,7 +88,7 @@ export default function SearchedUserProfile() {
           </div>
         </div>
       </div>
-      <div className="mt-12 flex gap-4 justify-around py-4 border-y border-[var(--accent)]/20">
+      <div className="mt-6 flex gap-4 justify-around py-4 border-y border-[var(--accent)]/20">
         <div className="flex flex-col items-center">
           <p className="text-4xl font-bold">{friends.length}</p>
           <p className="text-lg">Friends</p>
@@ -105,12 +107,12 @@ export default function SearchedUserProfile() {
           <p className="text-xl font-bold">Favorite Movies</p>
           <button
             onClick={openFavoritesModal}
-            className="flex items-center text-[var(--accent)] text-lg"
+            className="flex items-center text-[var(--accent)] text-lg cursor-pointer"
           >
             See All <ChevronRight />
           </button>
         </div>
-        <div className="flex gap-2 mt-8">
+        <div className="flex gap-2 mt-6">
           {userData?.favorites?.map((movie, index) => {
             return (
               <div
@@ -130,7 +132,7 @@ export default function SearchedUserProfile() {
           <div>
             <p className="text-xl font-bold">Top Genres</p>
           </div>
-          <div className="mt-2">
+          <div className="mt-6">
             {
               topGenres.map((genre) =>{
                 const totalFavoriteMovies = userData?.favorites?.length;

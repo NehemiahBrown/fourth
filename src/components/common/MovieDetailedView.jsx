@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useState, useEffect, useRef } from "react";
 import { getMovieDetails } from "../../services/tmdb.js";
 import {
@@ -25,6 +25,7 @@ import CastMemberModal from "./CastMemberModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();
+  const navigate = useNavigate()
 
   const { watchListMovies, removeFromWatchList, addToWatchList } =
     useWatchList();
@@ -144,6 +145,8 @@ export default function MovieDetailedView() {
   return (
     <main className="min-h-dvh">
       <div className="-mx-4 -mt-4 relative ">
+      <div onClick={() => navigate(-1)} className="absolute top-4 left-4 bg-[var(--surface)] p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"><ChevronLeft size={30}/></div>
+
         <img
           src={movieDetails?.backdrop}
           alt={`${movieDetails?.title} backdrop.`}

@@ -33,7 +33,7 @@ export default function CastMemberModal({
             <ChevronLeft
               onClick={closeCastModal}
               size={44}
-              className="cursor-pointer bg-[var(--surface)] p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 rounded-full"
+              className=" bg-[var(--surface)] p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"
             />
           </div>
           <div className="flex-1 flex flex-col gap-2 mt-3 px-4">
