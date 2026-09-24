@@ -49,7 +49,6 @@ export default function MovieDetailedView() {
     (movie) => movie.id === movieDetails?.id
   );
 
-  const isInFavorites = 
   // Close and open trailer modal
   function closeModal() {
     setShowTrailerModal(false);

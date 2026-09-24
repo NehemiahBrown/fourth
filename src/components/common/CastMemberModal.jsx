@@ -29,11 +29,11 @@ export default function CastMemberModal({
           <div className="h-[550px] w-full md:w-[400px] shrink-0">
             <img className="h-full w-full object-cover object-top" src={castMemberDetails?.picture} alt={`Picture of ${castMemberDetails?.name}`} />
           </div>
-          <div className="absolute top-3">
+          <div className="absolute top-3 left-2">
             <ChevronLeft
               onClick={closeCastModal}
-              size={36}
-              className="cursor-pointer text-[var(--accent-dark)]"
+              size={44}
+              className="cursor-pointer bg-[var(--surface)] p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 rounded-full"
             />
           </div>
           <div className="flex-1 flex flex-col gap-2 mt-3 px-4">

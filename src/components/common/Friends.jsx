@@ -3,8 +3,12 @@ import { Search } from "lucide-react";
 import { findAFriend } from "../../services/firestore";
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+
+import UserAvatar from "../../assets/userAvatar.png"
 
 export default function Friends() {
+  const navigate = useNavigate();
   const [friendInputValue, setFriendInputValue] = useState("");
   const [friendSearchResults, setFriendSearchResults] = useState([]);
 
@@ -23,8 +27,6 @@ export default function Friends() {
     };
     fetchSearchResults();
   }, [friendInputValue]);
-
-  console.log(friendSearchResults);
 
   return (
     <main>
@@ -49,16 +51,16 @@ export default function Friends() {
           <div className="bg-white/80 w-[98%] mx-auto py-1 px-2 mt-2 rounded-sm">
             {friendSearchResults.map((friend) => {
               return (
-                <div key={friend.uid}>
-                  <div className="flex gap-2 items-center">
+                <div key={friend?.uid} onClick={() => navigate(`/users/${friend?.uid}`)}>
+                  <div className="flex gap-2 items-center py-2">
                     <img
-                      className="w-[30px] h-[30px] rounded-md"
-                      src={friend?.profilePicture}
-                      alt=""
+                      className="w-[38px] h-[38px] rounded-md"
+                      src={friend?.profilePicture ? friend?.profilePicture : UserAvatar}
+                      alt={friend?.userName + " profile picture."}
                     />
                     <p className="text-[var(--secondary-text)]">
                       {friend?.userName}
-                    </p>{" "}
+                    </p>
                   </div>
                 </div>
               );

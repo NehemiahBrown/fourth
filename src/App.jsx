@@ -8,6 +8,7 @@ import SignUp from "./components/auth/SignUp";
 import LogIn from "./components/auth/LogIn";
 import Landing from "./components/auth/Landing";
 import MovieDetailedView from "./components/common/MovieDetailedView.jsx";
+import UserProfile from "./components/common/UserProfile.jsx"
 import WatchList from "./components/common/WatchList.jsx";
 import Friends from "./components/common/Friends.jsx";
 import Profile from "./components/common/Profile.jsx";
@@ -34,8 +35,11 @@ export default function App() {
                 <Route path="/app" element={<Home />} />
                 <Route path="/watchlist" element={<WatchList />} />
                 <Route path="/friends" element={<Friends />} />
+                {/* The logged in user's profile */}
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/movie/:movieId" element={<MovieDetailedView />} />
+                 {/* The profile page for searched users */}
+                <Route path="/users/:userId" element={<UserProfile />}/>
               </Route>
             </Route>
           </Routes>
