@@ -5,7 +5,7 @@ import { findAFriend } from "../../services/firestore";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
-import UserAvatar from "../../assets/userAvatar.png"
+import UserAvatar from "../../assets/userAvatar.png";
 
 export default function Friends() {
   const navigate = useNavigate();
@@ -51,11 +51,19 @@ export default function Friends() {
           <div className="bg-white/80 w-[98%] mx-auto py-1 px-2 mt-2 rounded-sm">
             {friendSearchResults.map((friend) => {
               return (
-                <div key={friend?.uid} onClick={() => navigate(`/users/${friend?.uid}`)}>
+                <div
+                  key={friend?.uid}
+                  onClick={() => navigate(`/users/${friend?.uid}`)}
+                  className="cursor-pointer"
+                >
                   <div className="flex gap-2 items-center py-2">
                     <img
                       className="w-[38px] h-[38px] rounded-md"
-                      src={friend?.profilePicture ? friend?.profilePicture : UserAvatar}
+                      src={
+                        friend?.profilePicture
+                          ? friend?.profilePicture
+                          : UserAvatar
+                      }
                       alt={friend?.userName + " profile picture."}
                     />
                     <p className="text-[var(--secondary-text)]">
