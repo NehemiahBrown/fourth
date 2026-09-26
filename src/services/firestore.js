@@ -10,9 +10,11 @@ import {
   query,
   where,
   limit,
+  writeBatch,
   serverTimestamp,
 } from "firebase/firestore";
 import { getUserProfilePictureURL } from "./storage.js";
+
 
 export async function updateProfilePicture(uid, picture) {
   const userDocRef = doc(db, "users", uid);
@@ -117,4 +119,31 @@ export async function findAFriend(userName) {
       ...friend.data(),
     };
   });
+}
+
+export async function sendFriendRequest(currentUserId, requestedUserId){
+  const batch = writeBatch(db)
+
+  const outgoingRequestDoc = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
+   const incomingRequestDoc = doc(db, "users", requestedUserId, "incomingRequests", currentUserId)
+
+    batch.set(outgoingRequestDoc, {
+    friendRequest: "pending",
+    createdAt: serverTimestamp()
+   })
+
+   batch.set(incomingRequestDoc, {
+    createdAt: serverTimestamp()
+   })
+
+   await batch.commit()
+}
+
+export async function wasFriendRequestSent(currentUserId, requestedUserId){
+  const requestDocRef = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
+
+  const requestDocSnap = await getDoc(requestDocRef);
+
+  return requestDocSnap.exists();
+
 }

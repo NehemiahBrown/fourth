@@ -1,21 +1,31 @@
 import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+
 import {
   getUserDocument,
   getFavoriteMoviesDoc,
   getMovieWatchListDocs,
+  sendFriendRequest,
+  wasFriendRequestSent,
 } from "../../services/firestore.js";
 
+import UserAvatar from "../../assets/userAvatar.png"
 import { Ellipsis, ChevronRight, ChevronLeft } from "lucide-react";
+
 import SeeAllFavorites from "./SeeAllFavorites.jsx";
+
+import {useAuth } from "../../context/AuthContext.jsx"
+
 export default function SearchedUserProfile() {
   const { userId } = useParams();
   const navigate = useNavigate()
+  const { currentUser } = useAuth();
 
   const [userData, setUserData] = useState({});
   const [friends, setFriends] = useState([]);
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [topGenres, setTopGenres] = useState([]);
+  const [friendStatus, setFriendStatus] = useState();
 
   function openFavoritesModal() {
     setShowAllFavorites(true);
@@ -25,6 +35,7 @@ export default function SearchedUserProfile() {
     setShowAllFavorites(false);
   }
 
+  // Formual for collecting all of the instances of favorited movie's genres.
   useEffect(() => {
     const genreCounts = userData?.favorites?.reduce((counts, movie) => {
       movie.genres.forEach((genre) => {
@@ -44,7 +55,7 @@ export default function SearchedUserProfile() {
 
   }, [userData?.favorites]);
 
-
+// Collect user profile data for UI rendering
   useEffect(() => {
     const fetchUserProfile = async () => {
       const [user, favorites, watchlist] = await Promise.all([
@@ -64,13 +75,21 @@ export default function SearchedUserProfile() {
 
   console.log(userData);
 
+  useEffect(() => {
+    const checkFriendRequestStatus = async () => {
+      const friendRequestSent = await wasFriendRequestSent(currentUser.uid, userId);
+      
+    }
+    checkFriendRequestStatus()
+  }, [userId])
+
   return (
     <main>
       <button onClick={() => navigate(-1)} className="inline-block bg-[var(--surface)] p-1 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"><ChevronLeft size={30}/></button>
       <div className="ml-6 flex gap-4">
         <div className="mt-2">
           <img
-            src={userData?.user?.profilePicture}
+            src={`${userData?.user?.profilePicture ? userData?.user?.profilePicture : UserAvatar}`}
             alt={`${userData?.user?.userName} profile picture.`}
             className="w-[100px] h-[100px] rounded-full"
           />
@@ -79,7 +98,7 @@ export default function SearchedUserProfile() {
           <p className="text-3xl font-bold">{userData?.user?.fullName}</p>
           <p className=" text-lg text-[var(--primary-text)]/80">{`@${userData?.user?.userName}`}</p>
           <div className="mt-2 flex gap-2">
-            <button className="bg-[var(--accent-dark)] px-6 py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent-dark)]/80 transform-colors duration-200">
+            <button onClick={() => sendFriendRequest(currentUser.uid, userId)} className="bg-[var(--accent-dark)] px-6 py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent-dark)]/80 transform-colors duration-200">
               Add Friend
             </button>
             <button className="bg-[var(--accent)] px-6 py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
