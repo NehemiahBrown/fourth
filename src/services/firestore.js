@@ -12,6 +12,7 @@ import {
   limit,
   writeBatch,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 import { getUserProfilePictureURL } from "./storage.js";
 
@@ -37,7 +38,10 @@ export async function getUserDocument(uid) {
   const userDocSnap = await getDoc(userDocRef);
 
   if (userDocSnap.exists()) {
-    return userDocSnap.data();
+    return  {
+      id: userDocSnap.id,
+      ...userDocSnap.data(),
+    } 
   } else {
     console.log("No document exists.");
   }
@@ -145,5 +149,22 @@ export async function wasFriendRequestSent(currentUserId, requestedUserId){
   const requestDocSnap = await getDoc(requestDocRef);
 
   return requestDocSnap.exists();
+
+}
+
+export function listenForFriendRequests(currentUserId, callback){
+  const friendRequestsDoc = (collection(db, "users", currentUserId, "incomingRequests"))
+
+ const unsubscribe = onSnapshot(friendRequestsDoc, (snapshot) => {
+      const requests = snapshot.docs.map((request) => {
+        return {
+          senderId: request.id,
+          ...request.data()
+        }
+      })
+      callback(requests)
+  })
+
+  return unsubscribe
 
 }

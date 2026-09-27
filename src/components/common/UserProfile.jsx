@@ -10,7 +10,7 @@ import {
 } from "../../services/firestore.js";
 
 import UserAvatar from "../../assets/userAvatar.png"
-import { Ellipsis, ChevronRight, ChevronLeft } from "lucide-react";
+import { Ellipsis, ChevronRight, ChevronLeft, Plus, Check } from "lucide-react";
 
 import SeeAllFavorites from "./SeeAllFavorites.jsx";
 
@@ -26,6 +26,7 @@ export default function SearchedUserProfile() {
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [topGenres, setTopGenres] = useState([]);
   const [friendStatus, setFriendStatus] = useState();
+  const [buttonText, setButtonText] = useState("Add Friend");
 
   function openFavoritesModal() {
     setShowAllFavorites(true);
@@ -78,6 +79,10 @@ export default function SearchedUserProfile() {
   useEffect(() => {
     const checkFriendRequestStatus = async () => {
       const friendRequestSent = await wasFriendRequestSent(currentUser.uid, userId);
+      if (friendRequestSent){
+        setFriendStatus("requestSent")
+        setButtonText("Requested")
+      }
       
     }
     checkFriendRequestStatus()
@@ -86,25 +91,31 @@ export default function SearchedUserProfile() {
   return (
     <main>
       <button onClick={() => navigate(-1)} className="inline-block bg-[var(--surface)] p-1 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"><ChevronLeft size={30}/></button>
-      <div className="ml-6 flex gap-4">
-        <div className="mt-2">
+      <div className="sm:ml-2 md:ml-6 flex gap-4">
+        <div className="mt-2 flex gap-2">
           <img
             src={`${userData?.user?.profilePicture ? userData?.user?.profilePicture : UserAvatar}`}
             alt={`${userData?.user?.userName} profile picture.`}
-            className="w-[100px] h-[100px] rounded-full"
+            className="w-[85px] h-[85px] sm:w-[100px] sm:h-[100px] rounded-full"
           />
-        </div>
-        <div>
-          <p className="text-3xl font-bold">{userData?.user?.fullName}</p>
-          <p className=" text-lg text-[var(--primary-text)]/80">{`@${userData?.user?.userName}`}</p>
-          <div className="mt-2 flex gap-2">
-            <button onClick={() => sendFriendRequest(currentUser.uid, userId)} className="bg-[var(--accent-dark)] px-6 py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent-dark)]/80 transform-colors duration-200">
-              Add Friend
+          <div>
+            <div className="flex flex-col">
+              <p className="text-3xl font-bold">{userData?.user?.fullName}</p>
+              <p className=" text-lg text-[var(--primary-text)]/80">{`@${userData?.user?.userName}`}</p>
+            </div>
+            <div className="mt-2 flex gap-2">
+            <button onClick={() => sendFriendRequest(currentUser.uid, userId)} className="flex items-center justify-center  gap-1 w-[130px] xs:w-[160px] h-[40px] bg-[var(--accent-dark)] py-2 rounded-md xs:text-lg font-bold cursor-pointer enabled:active:scale-96 enabled:hover:bg-[var(--accent-dark)]/80 transform-colors duration-200 disabled:opacity-50" disabled={buttonText === "Requested"}>
+              {buttonText === "Add Friend" && <Plus size={20}/>}
+              {buttonText === "Requested" && <Check size={20}/>}
+
+              {buttonText}
             </button>
-            <button className="bg-[var(--accent)] px-6 py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
+            <button className="flex items-center justify-center w-[60px] h-[40px] bg-[var(--accent)] py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
               <Ellipsis />
             </button>
           </div>
+          </div>
+          
         </div>
       </div>
       <div className="mt-6 flex gap-4 justify-around py-4 border-y border-[var(--accent)]/20">
