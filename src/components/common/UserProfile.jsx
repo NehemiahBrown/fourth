@@ -6,11 +6,12 @@ import {
   getFavoriteMoviesDoc,
   getMovieWatchListDocs,
   sendFriendRequest,
-  wasFriendRequestSent,
+  checkFriendStatus,
+  acceptFriendRequest,
 } from "../../services/firestore.js";
 
 import UserAvatar from "../../assets/userAvatar.png"
-import { Ellipsis, ChevronRight, ChevronLeft, Plus, Check } from "lucide-react";
+import { Ellipsis, ChevronRight, ChevronLeft, Plus, Check, Handshake } from "lucide-react";
 
 import SeeAllFavorites from "./SeeAllFavorites.jsx";
 
@@ -25,8 +26,7 @@ export default function SearchedUserProfile() {
   const [friends, setFriends] = useState([]);
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [topGenres, setTopGenres] = useState([]);
-  const [friendStatus, setFriendStatus] = useState();
-  const [buttonText, setButtonText] = useState("Add Friend");
+  const [friendStatus, setFriendStatus] = useState(null);
 
   function openFavoritesModal() {
     setShowAllFavorites(true);
@@ -56,6 +56,22 @@ export default function SearchedUserProfile() {
 
   }, [userData?.favorites]);
 
+ async function handleAddingFriends(){
+    if(currentUser.uid === userId){
+      return 
+    }
+
+    if(friendStatus === "Add Friend"){
+      await sendFriendRequest(currentUser.uid, userId)
+      setFriendStatus("Requested")
+    } else if(friendStatus === "Confirm"){
+      await acceptFriendRequest(currentUser.uid, userId)
+      setFriendStatus("Friends")
+    }
+    }
+    
+
+
 // Collect user profile data for UI rendering
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -78,12 +94,8 @@ export default function SearchedUserProfile() {
 
   useEffect(() => {
     const checkFriendRequestStatus = async () => {
-      const friendRequestSent = await wasFriendRequestSent(currentUser.uid, userId);
-      if (friendRequestSent){
-        setFriendStatus("requestSent")
-        setButtonText("Requested")
-      }
-      
+      const status = await checkFriendStatus(currentUser.uid, userId);
+      setFriendStatus(status)
     }
     checkFriendRequestStatus()
   }, [userId])
@@ -104,11 +116,13 @@ export default function SearchedUserProfile() {
               <p className=" text-lg text-[var(--primary-text)]/80">{`@${userData?.user?.userName}`}</p>
             </div>
             <div className="mt-2 flex gap-2">
-            <button onClick={() => sendFriendRequest(currentUser.uid, userId)} className="flex items-center justify-center  gap-1 w-[130px] xs:w-[160px] h-[40px] bg-[var(--accent-dark)] py-2 rounded-md xs:text-lg font-bold cursor-pointer enabled:active:scale-96 enabled:hover:bg-[var(--accent-dark)]/80 transform-colors duration-200 disabled:opacity-50" disabled={buttonText === "Requested"}>
-              {buttonText === "Add Friend" && <Plus size={20}/>}
-              {buttonText === "Requested" && <Check size={20}/>}
+            <button onClick={handleAddingFriends} className="flex items-center justify-center  gap-1 w-[130px] xs:w-[160px] h-[40px] bg-[var(--accent-dark)] py-2 rounded-md xs:text-lg font-bold cursor-pointer enabled:active:scale-96 enabled:hover:bg-[var(--accent-dark)]/80 transform-colors duration-200 disabled:opacity-50" disabled={friendStatus === "Requested"}>
+              {friendStatus === "Add Friend" && <Plus size={20}/>}
+              {friendStatus === "Requested" && <Check size={20}/>}
+              {friendStatus === "Friends" && <Handshake size={20}/>}
 
-              {buttonText}
+
+              {friendStatus}
             </button>
             <button className="flex items-center justify-center w-[60px] h-[40px] bg-[var(--accent)] py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
               <Ellipsis />

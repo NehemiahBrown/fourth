@@ -26,7 +26,9 @@ export default function Friends() {
     const fetchSearchResults = async () => {
       if (friendInputValue.length >= 2) {
         const results = await findAFriend(friendInputValue);
-        setFriendSearchResults(results);
+        // Removing current user from search results
+        const filteredResults = results.filter((result) => currentUser.uid !== result.uid)
+        setFriendSearchResults(filteredResults);
       } else {
         setFriendSearchResults([]);
       }

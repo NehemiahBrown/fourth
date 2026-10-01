@@ -125,30 +125,71 @@ export async function findAFriend(userName) {
   });
 }
 
-export async function sendFriendRequest(currentUserId, requestedUserId){
+export async function sendFriendRequest(currentUserId, requestedUserId,){
+  if (currentUserId === requestedUserId){
+    return
+  }
+  
   const batch = writeBatch(db)
 
-  const outgoingRequestDoc = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
+    const outgoingRequestDoc = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
    const incomingRequestDoc = doc(db, "users", requestedUserId, "incomingRequests", currentUserId)
 
     batch.set(outgoingRequestDoc, {
     friendRequest: "pending",
-    createdAt: serverTimestamp()
+    createdAt: serverTimestamp(),
    })
 
    batch.set(incomingRequestDoc, {
-    createdAt: serverTimestamp()
+    createdAt: serverTimestamp(),
    })
 
    await batch.commit()
 }
 
-export async function wasFriendRequestSent(currentUserId, requestedUserId){
-  const requestDocRef = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
+export async function acceptFriendRequest(currentUserId, requestSenderId){
+  const batch = writeBatch(db)
 
-  const requestDocSnap = await getDoc(requestDocRef);
+  const outgoingRequestDoc = doc(db, "users", requestSenderId, "outgoingRequests", currentUserId)
+  const incomingRequestDoc = doc(db, "users", currentUserId, "incomingRequests", requestSenderId)
+ 
+  const friendsDocCurrentUser = doc(db, "users", currentUserId, "Friends", requestSenderId)
+  const friendsDocRequestSender = doc(db, "users", requestSenderId, "Friends", currentUserId)
 
-  return requestDocSnap.exists();
+  batch.set(friendsDocCurrentUser, {
+    acceptedAt: serverTimestamp(),  
+  })
+
+  batch.set(friendsDocRequestSender, {
+    acceptedAt: serverTimestamp(),
+  })
+
+  batch.delete(outgoingRequestDoc)
+  batch.delete(incomingRequestDoc)
+
+  await batch.commit()
+}
+
+export async function checkFriendStatus(currentUserId, requestedUserId){
+  const outgoingRequestDocRef = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
+  const incomingRequestDocRef = doc(db, "users", currentUserId, "incomingRequests", requestedUserId);
+  const friendsDocRef = doc(db, "users", currentUserId, "Friends", requestedUserId)
+
+  const [outgoingRequestSnap, incomingRequestSnap, friendsDocSnap] = await Promise.all([
+     getDoc(outgoingRequestDocRef),
+     getDoc(incomingRequestDocRef),
+     getDoc(friendsDocRef),
+  ])
+
+  if(friendsDocSnap.exists()){
+    return "Friends"
+  } else if(outgoingRequestSnap.exists()){
+    return "Requested"
+  } else if (incomingRequestSnap.exists()){
+    return "Confirm"
+  } else {
+    return "Add Friend"
+  }
 
 }
 
