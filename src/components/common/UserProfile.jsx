@@ -79,6 +79,7 @@ export default function SearchedUserProfile() {
   async function handleRemovingFriends(){
     await removeFriend(currentUser.uid, userId)
     setFriendStatus("Add Friend")
+    setOptionsDropdown(false)
   }
     
 
@@ -138,14 +139,14 @@ export default function SearchedUserProfile() {
 
               {friendStatus}
             </button>
-            <div className="relative md:flex md:gap-2 md:items-center">
+           {friendStatus === "Friends" && <div className="relative md:flex md:gap-2 md:items-center">
               <button onClick={toggleOptionsDropdown} className="flex items-center justify-center w-[60px] h-[40px] bg-[var(--accent)] py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
                 <Ellipsis />
               </button>
               {optionsDropdown && <div onClick={handleRemovingFriends} className="absolute md:static bg-white/60 px-4 py-2 rounded-sm mt-1 cursor-pointer">
                 <p className="text-nowrap">Remove Friend</p>
               </div>}
-            </div>
+            </div>}
            
           </div>
           </div>
