@@ -1,23 +1,30 @@
 import { useWatchList } from "../../context/WatchListContext";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
-import {useNavigate} from "react-router"
-import FourthIcon from "../../assets/fourthicon.png"
+import { useNavigate } from "react-router";
+import FourthIcon from "../../assets/fourthicon.png";
 
 export default function WatchList() {
   const { watchListMovies, removeFromWatchList, addToWatchList } =
     useWatchList();
 
-  const [movieGenre, setMovieGenre] = useState("All")
+  const [movieGenre, setMovieGenre] = useState("All");
   const [rowsShown, setRowsShown] = useState(2);
   const [columnsShown, setColumnsShown] = useState(2);
-  const [sortOption, setSortOption] = useState("default")
+  const [sortOption, setSortOption] = useState("default");
 
-  const filteredMovies = movieGenre === "All" ? watchListMovies : watchListMovies.filter((movie) => movie.genres.some((genre) => movieGenre.toLowerCase() === genre.toLowerCase()))
+  const filteredMovies =
+    movieGenre === "All"
+      ? watchListMovies
+      : watchListMovies.filter((movie) =>
+          movie.genres.some(
+            (genre) => movieGenre.toLowerCase() === genre.toLowerCase(),
+          ),
+        );
   const moviesShown = rowsShown * columnsShown;
 
   const carouselRef = useRef(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   //   Carousel scroll functions
   function scrollLeft() {
@@ -61,166 +68,232 @@ export default function WatchList() {
   }
 
   // filter movies based on genre
-  function filterMovies(e){
-    const buttonText = e.currentTarget.textContent
-    setMovieGenre(buttonText)
-    setRowsShown(2)
+  function filterMovies(e) {
+    const buttonText = e.currentTarget.textContent;
+    setMovieGenre(buttonText);
+    setRowsShown(2);
   }
 
-  useEffect(()=> {
-    function updateColumns(){
-      if(window.innerWidth <= 640){
-        setColumnsShown(2)
-      } else if(window.innerWidth <= 768){
-        setColumnsShown(3)
-      } else{
-        setColumnsShown(4)
+  useEffect(() => {
+    function updateColumns() {
+      if (window.innerWidth <= 640) {
+        setColumnsShown(2);
+      } else if (window.innerWidth <= 768) {
+        setColumnsShown(3);
+      } else {
+        setColumnsShown(4);
       }
     }
-   updateColumns();
-   window.addEventListener("resize", updateColumns)
-   return () => window.removeEventListener("resize", updateColumns)
-  }, [])
+    updateColumns();
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
+  }, []);
 
-  function loadMoreMovies(){
-    setRowsShown((current) => current + 2)
+  function loadMoreMovies() {
+    setRowsShown((current) => current + 2);
   }
 
   // Sort movies function
-function sortMovies(){
-    const movies = [
-      ...filteredMovies
-    ]
+  function sortMovies() {
+    const movies = [...filteredMovies];
 
-    switch(sortOption){
+    switch (sortOption) {
       case "default":
-        return movies.sort((a, b ) => b.addedAt?.toDate() - a.addedAt?.toDate())
+        return movies.sort((a, b) => b.addedAt?.toDate() - a.addedAt?.toDate());
       case "oldest":
-        return movies.sort((a, b ) => a.addedAt?.toDate() - b.addedAt?.toDate())
+        return movies.sort((a, b) => a.addedAt?.toDate() - b.addedAt?.toDate());
       case "titleAlphabetical":
-        return movies.sort((a, b) => a.title?.localeCompare(b?.title)) 
+        return movies.sort((a, b) => a.title?.localeCompare(b?.title));
       case "titleReverse":
-        return movies.sort((a, b) => b.title?.localeCompare(a?.title)) 
+        return movies.sort((a, b) => b.title?.localeCompare(a?.title));
       case "releaseDateNewest":
         return movies.sort((a, b) => {
-          const dateA = new Date(a?.releaseDate)
-          const dateB = new Date(b?.releaseDate)
-          return(
-            dateB - dateA
-          )
-        })
+          const dateA = new Date(a?.releaseDate);
+          const dateB = new Date(b?.releaseDate);
+          return dateB - dateA;
+        });
       case "releaseDateOldest":
         return movies.sort((a, b) => {
-          const dateA = new Date(a?.releaseDate)
-          const dateB = new Date(b?.releaseDate)
-          return(
-            dateA - dateB
-          )
-        })
-      default :
-        return movies
+          const dateA = new Date(a?.releaseDate);
+          const dateB = new Date(b?.releaseDate);
+          return dateA - dateB;
+        });
+      default:
+        return movies;
     }
   }
   const sortedMovies = sortMovies();
   return (
     <>
-    <section className="flex flex-col flex-1">
-      <div className="flex flex-col gap-2">
+      <section className="flex flex-col flex-1">
+        <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold text-[var(--accent)]">Watchlist</h1>
           <div className="flex justify-between items-center">
             <p>{`${watchListMovies.length === 0 ? "No saved movies yet." : `${watchListMovies.length} ${watchListMovies.length === 1 ? "Title" : "Titles"}`}`}</p>
-            <select onChange={(e) => setSortOption(e.target.value)} className="bg-[var(--accent)] text-[var(--secondary-text)] rounded-md py-1 px-3 focus:outline-none focus:ring-0 cursor-pointer">
-              <option className="cursor-pointer" value="default">Recently Added</option>
-              <option className="cursor-pointer" value="oldest">Oldest Added</option>
-              <option className="cursor-pointer" value="titleAlphabetical">Title [A-Z]</option>
-              <option className="cursor-pointer" value="titleReverse">Title [Z-A]</option>
-              <option className="cursor-pointer" value="releaseDateNewest">Release Date: Newest</option>
-              <option className="cursor-pointer" value="releaseDateOldest">Release Date: Oldest</option>
-
+            <select
+              onChange={(e) => setSortOption(e.target.value)}
+              className="bg-[var(--accent)] text-[var(--secondary-text)] rounded-md py-1 px-3 focus:outline-none focus:ring-0 cursor-pointer"
+            >
+              <option className="cursor-pointer" value="default">
+                Recently Added
+              </option>
+              <option className="cursor-pointer" value="oldest">
+                Oldest Added
+              </option>
+              <option className="cursor-pointer" value="titleAlphabetical">
+                Title [A-Z]
+              </option>
+              <option className="cursor-pointer" value="titleReverse">
+                Title [Z-A]
+              </option>
+              <option className="cursor-pointer" value="releaseDateNewest">
+                Release Date: Newest
+              </option>
+              <option className="cursor-pointer" value="releaseDateOldest">
+                Release Date: Oldest
+              </option>
             </select>
           </div>
-      </div>
+        </div>
 
-      <div className="flex flex-col w-full flex-1">
-        <div className="relative  mt-4">
-          <button
-            onClick={scrollLeft}
-            className="absolute hidden md:block carouselArrow top-0 bottom-0 left-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
-          >
-            <ChevronLeft size={30} />
-          </button>
+        <div className="flex flex-col w-full flex-1">
+          <div className="relative  mt-4">
+            <button
+              onClick={scrollLeft}
+              className="absolute hidden md:block carouselArrow top-0 bottom-0 -left-2 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
+            >
+              <ChevronLeft size={30} />
+            </button>
 
-          <div
-            ref={carouselRef}
-            className="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory"
-          >
-             <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              All
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Action
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Adventure
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Animation
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Comedy
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Crime
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Documentary
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Drama
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Family
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Fantasy
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Horror
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Romance
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Science Fiction
-            </button>
-            <button onClick={filterMovies} className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer">
-              Thriller
+            <div
+              ref={carouselRef}
+              className="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory"
+            >
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                All
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Action
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Adventure
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Animation
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Comedy
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Crime
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Documentary
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Drama
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Family
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Fantasy
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Horror
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Romance
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Science Fiction
+              </button>
+              <button
+                onClick={filterMovies}
+                className="border border-[var(--accent-dark)] rounded-md px-3 py-[0.8px] hover:bg-[var(--accent-dark)] active:scale-95 snap-start shrink-0 cursor-pointer"
+              >
+                Thriller
+              </button>
+            </div>
+            <button
+              onClick={scrollRight}
+              className="absolute carouselArrow hidden md:block top-0 bottom-0 right-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
+            >
+              <ChevronRight size={30} />
             </button>
           </div>
-          <button
-            onClick={scrollRight}
-            className="absolute carouselArrow hidden md:block top-0 bottom-0 right-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
-          >
-            <ChevronRight size={30} />
-          </button>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
-          {sortedMovies.length === 0 ? 
-            <div className="mt-6 col-span-full flex items-center justify-center">
-              <p className="text-3xl md:text-6xl text-center">No Movies in this genre</p> 
-            </div> 
-          : sortedMovies.slice(0, moviesShown).map((movie, index) =>{
-            return (
-              <div key={movie.id} className="overflow-hidden">
-                <img onClick={() => navigate(`/movie/${movie.id}`)} src={movie.poster} alt={movie.title} className="object-cover hover:scale-110 active:scale-98 transition-transform duration-300 ease-in-out cursor-pointer "/>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
+            {sortedMovies.length === 0 ? (
+              <div className="mt-6 col-span-full flex items-center justify-center">
+                <p className="text-3xl md:text-6xl text-center">
+                  No Movies in this genre
+                </p>
               </div>
-            )
-          })}
+            ) : (
+              sortedMovies.slice(0, moviesShown).map((movie, index) => {
+                return (
+                  <div key={movie.id} className="overflow-hidden">
+                    <img
+                      onClick={() => navigate(`/movie/${movie.id}`)}
+                      src={movie.poster}
+                      alt={movie.title}
+                      className="object-cover hover:scale-110 active:scale-98 transition-transform duration-300 ease-in-out cursor-pointer "
+                    />
+                  </div>
+                );
+              })
+            )}
+          </div>
+          {moviesShown <= sortedMovies.length && (
+            <div className="mx-auto mt-6 w-[70%] max-w-[150px]">
+              <button
+                onClick={loadMoreMovies}
+                className="w-full bg-[var(--accent)] py-1 rounded-sm cursor-pointer active:scale-95"
+              >
+                Load More
+              </button>
+            </div>
+          )}
         </div>
-       {moviesShown <= sortedMovies.length && <div className="mx-auto mt-6 w-[70%] max-w-[150px]">
-          <button onClick={loadMoreMovies} className="w-full bg-[var(--accent)] py-1 rounded-sm cursor-pointer active:scale-95">Load More</button>
-        </div>}
-      </div>
       </section>
     </>
   );

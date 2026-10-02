@@ -25,11 +25,16 @@ import CastMemberModal from "./CastMemberModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { watchListMovies, removeFromWatchList, addToWatchList } =
     useWatchList();
-  const {favoriteMovies, fetchFavoriteMovies, addFavoriteMovie, removeFavoriteMovie} = useFavoriteMovies();
+  const {
+    favoriteMovies,
+    fetchFavoriteMovies,
+    addFavoriteMovie,
+    removeFavoriteMovie,
+  } = useFavoriteMovies();
   const { currentUser } = useAuth();
 
   const [movieDetails, setMovieDetails] = useState();
@@ -47,7 +52,7 @@ export default function MovieDetailedView() {
     (movie) => movie.id === movieDetails?.id,
   );
   const isInMovieFavorites = favoriteMovies.some(
-    (movie) => movie.id === movieDetails?.id
+    (movie) => movie.id === movieDetails?.id,
   );
 
   // Close and open trailer modal
@@ -83,14 +88,13 @@ export default function MovieDetailedView() {
     }
   }
 
- 
-  function addOrRemoveFromFavorites(){
-    if(!isInMovieFavorites){
-      addFavoriteMovie(movieDetails)
-      addMovieToFavorites(currentUser.uid, movieDetails)
-    } else if (isInMovieFavorites){
+  function addOrRemoveFromFavorites() {
+    if (!isInMovieFavorites) {
+      addFavoriteMovie(movieDetails);
+      addMovieToFavorites(currentUser.uid, movieDetails);
+    } else if (isInMovieFavorites) {
       removeFavoriteMovie(movieDetails);
-      deleteMovieFromFavorites(currentUser.uid, movieDetails?.id)
+      deleteMovieFromFavorites(currentUser.uid, movieDetails?.id);
     }
   }
 
@@ -145,7 +149,12 @@ export default function MovieDetailedView() {
   return (
     <main className="min-h-dvh">
       <div className="-mx-4 -mt-4 relative ">
-      <div onClick={() => navigate(-1)} className="absolute top-4 left-4 bg-[var(--surface)] p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"><ChevronLeft size={30}/></div>
+        <div
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 bg-[var(--surface)] p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"
+        >
+          <ChevronLeft size={30} />
+        </div>
 
         <img
           src={movieDetails?.backdrop}
@@ -206,7 +215,10 @@ export default function MovieDetailedView() {
                       hover:bg-[var(--accent-dark)] active:scale-95
                       transition-all duration-200 cursor-pointer"
             >
-              <Heart size={18} className={isInMovieFavorites ? "fill-current" : ""}  />
+              <Heart
+                size={18}
+                className={isInMovieFavorites ? "fill-current" : ""}
+              />
               Favorite
             </button>
           </div>
@@ -260,7 +272,9 @@ export default function MovieDetailedView() {
                         </div>
                       )}
                       <div className="flex flex-col justify-center items-center">
-                      <p className="text-center truncate w-[80px]">{actor.castName}</p>
+                        <p className="text-center truncate w-[80px]">
+                          {actor.castName}
+                        </p>
                         <div>
                           <p className="text-center text-sm text-[var(--primary-text)]/60 line-clamp-2">
                             {actor.character}

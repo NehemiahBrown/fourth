@@ -9,26 +9,34 @@ import {
   checkFriendStatus,
   acceptFriendRequest,
   removeFriend,
+  listenForNewFriends,
 } from "../../services/firestore.js";
 
-import UserAvatar from "../../assets/userAvatar.png"
-import { Ellipsis, ChevronRight, ChevronLeft, Plus, Check, Handshake } from "lucide-react";
+import UserAvatar from "../../assets/userAvatar.png";
+import {
+  Ellipsis,
+  ChevronRight,
+  ChevronLeft,
+  Plus,
+  Check,
+  Handshake,
+} from "lucide-react";
 
 import SeeAllFavorites from "./SeeAllFavorites.jsx";
 
-import {useAuth } from "../../context/AuthContext.jsx"
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function SearchedUserProfile() {
   const { userId } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
 
   const [userData, setUserData] = useState({});
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [topGenres, setTopGenres] = useState([]);
-  const [friends, setFriends] = useState([])
+  const [friends, setFriends] = useState([]);
   const [friendStatus, setFriendStatus] = useState(null);
-  const [optionsDropdown, setOptionsDropdown] = useState(false)
+  const [optionsDropdown, setOptionsDropdown] = useState(false);
 
   function openFavoritesModal() {
     setShowAllFavorites(true);
@@ -38,8 +46,8 @@ export default function SearchedUserProfile() {
     setShowAllFavorites(false);
   }
 
-  function toggleOptionsDropdown(){
-    setOptionsDropdown(current => !current)
+  function toggleOptionsDropdown() {
+    setOptionsDropdown((current) => !current);
   }
 
   // Formual for collecting all of the instances of favorited movie's genres.
@@ -55,36 +63,35 @@ export default function SearchedUserProfile() {
       return counts;
     }, {});
 
-    if(genreCounts){
-      const favoriteGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]).slice(0, 3)
-      setTopGenres(favoriteGenres)
+    if (genreCounts) {
+      const favoriteGenres = Object.entries(genreCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+      setTopGenres(favoriteGenres);
     }
-
   }, [userData?.favorites]);
 
- async function handleAddingFriends(){
-    if(currentUser.uid === userId){
-      return 
+  async function handleAddingFriends() {
+    if (currentUser.uid === userId) {
+      return;
     }
 
-    if(friendStatus === "Add Friend"){
-      await sendFriendRequest(currentUser.uid, userId)
-      setFriendStatus("Requested")
-    } else if(friendStatus === "Confirm"){
-      await acceptFriendRequest(currentUser.uid, userId)
-      setFriendStatus("Friends")
+    if (friendStatus === "Add Friend") {
+      await sendFriendRequest(currentUser.uid, userId);
+      setFriendStatus("Requested");
+    } else if (friendStatus === "Confirm") {
+      await acceptFriendRequest(currentUser.uid, userId);
+      setFriendStatus("Friends");
     }
-    }
-
-  async function handleRemovingFriends(){
-    await removeFriend(currentUser.uid, userId)
-    setFriendStatus("Add Friend")
-    setOptionsDropdown(false)
   }
-    
 
+  async function handleRemovingFriends() {
+    await removeFriend(currentUser.uid, userId);
+    setFriendStatus("Add Friend");
+    setOptionsDropdown(false);
+  }
 
-// Collect user profile data for UI rendering
+  // Collect user profile data for UI rendering
   useEffect(() => {
     const fetchUserProfile = async () => {
       const [user, favorites, watchlist] = await Promise.all([
@@ -102,22 +109,31 @@ export default function SearchedUserProfile() {
     fetchUserProfile();
   }, [userId]);
 
-  console.log(userData);
-
   useEffect(() => {
-    if(!currentUser?.uid){
-      return 
+    if (!currentUser?.uid) {
+      return;
     }
     const checkFriendRequestStatus = async () => {
       const status = await checkFriendStatus(currentUser.uid, userId);
-      setFriendStatus(status)
-    }
-    checkFriendRequestStatus()
-  }, [userId, currentUser?.uid])
+      setFriendStatus(status);
+    };
+    checkFriendRequestStatus();
+  }, [userId, currentUser?.uid]);
+
+  // Getting friends array from new friend listener
+  useEffect(() => {
+    const unsubscribe = listenForNewFriends(userId, setFriends);
+    return unsubscribe;
+  }, [userId]);
 
   return (
     <main>
-      <button onClick={() => navigate(-1)} className="inline-block bg-[var(--surface)] p-1 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"><ChevronLeft size={30}/></button>
+      <button
+        onClick={() => navigate(-1)}
+        className="inline-block bg-[var(--surface)] p-1 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"
+      >
+        <ChevronLeft size={30} />
+      </button>
       <div className="sm:ml-2 md:ml-6 flex gap-4">
         <div className="mt-2 flex gap-2">
           <img
@@ -131,26 +147,37 @@ export default function SearchedUserProfile() {
               <p className=" text-lg text-[var(--primary-text)]/80">{`@${userData?.user?.userName}`}</p>
             </div>
             <div className="mt-2 flex gap-2">
-            <button onClick={handleAddingFriends} className="flex items-center justify-center  gap-1 w-[130px] xs:w-[160px] h-[40px] bg-[var(--accent-dark)] py-2 rounded-md xs:text-lg font-bold cursor-pointer enabled:active:scale-96 enabled:hover:bg-[var(--accent-dark)]/80 transform-colors duration-200 disabled:opacity-50" disabled={friendStatus === "Requested"}>
-              {friendStatus === "Add Friend" && <Plus size={20}/>}
-              {friendStatus === "Requested" && <Check size={20}/>}
-              {friendStatus === "Friends" && <Handshake size={20}/>}
+              <button
+                onClick={handleAddingFriends}
+                className="flex items-center justify-center  gap-1 w-[130px] xs:w-[160px] h-[40px] bg-[var(--accent-dark)] py-2 rounded-md xs:text-lg font-bold cursor-pointer enabled:active:scale-96 enabled:hover:bg-[var(--accent-dark)]/80 transform-colors duration-200 disabled:opacity-50"
+                disabled={friendStatus === "Requested"}
+              >
+                {friendStatus === "Add Friend" && <Plus size={20} />}
+                {friendStatus === "Requested" && <Check size={20} />}
+                {friendStatus === "Friends" && <Handshake size={20} />}
 
-
-              {friendStatus}
-            </button>
-           {friendStatus === "Friends" && <div className="relative md:flex md:gap-2 md:items-center">
-              <button onClick={toggleOptionsDropdown} className="flex items-center justify-center w-[60px] h-[40px] bg-[var(--accent)] py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
-                <Ellipsis />
+                {friendStatus}
               </button>
-              {optionsDropdown && <div onClick={handleRemovingFriends} className="absolute md:static bg-white/60 px-4 py-2 rounded-sm mt-1 cursor-pointer">
-                <p className="text-nowrap">Remove Friend</p>
-              </div>}
-            </div>}
-           
+              {friendStatus === "Friends" && (
+                <div className="relative md:flex md:gap-2 md:items-center">
+                  <button
+                    onClick={toggleOptionsDropdown}
+                    className="flex items-center justify-center w-[60px] h-[40px] bg-[var(--accent)] py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200"
+                  >
+                    <Ellipsis />
+                  </button>
+                  {optionsDropdown && (
+                    <div
+                      onClick={handleRemovingFriends}
+                      className="absolute md:static bg-white/60 px-4 py-2 rounded-sm mt-1 cursor-pointer"
+                    >
+                      <p className="text-nowrap">Remove Friend</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-          </div>
-          
         </div>
       </div>
       <div className="mt-6 flex gap-4 justify-around py-4 border-y border-[var(--accent)]/20">
@@ -198,22 +225,26 @@ export default function SearchedUserProfile() {
             <p className="text-xl font-bold">Top Genres</p>
           </div>
           <div className="mt-6">
-            {
-              topGenres.map((genre) =>{
-                const totalFavoriteMovies = userData?.favorites?.length;
-                const percentage = Math.floor(genre[1] / totalFavoriteMovies * 100);
-          
-                return (
-                  <div key={genre[0]} className="w-full md:max-w-2xl">
-                    <div className="flex items-center justify-between">
-                      <p>{genre[0]}</p>
-                      <p>{`${percentage}%`}</p>
-                    </div>
-                    <progress className="w-full genre-progressBar" value={percentage} max={100}/>
+            {topGenres.map((genre) => {
+              const totalFavoriteMovies = userData?.favorites?.length;
+              const percentage = Math.floor(
+                (genre[1] / totalFavoriteMovies) * 100,
+              );
+
+              return (
+                <div key={genre[0]} className="w-full md:max-w-2xl">
+                  <div className="flex items-center justify-between">
+                    <p>{genre[0]}</p>
+                    <p>{`${percentage}%`}</p>
                   </div>
-                )
-              })
-            }
+                  <progress
+                    className="w-full genre-progressBar"
+                    value={percentage}
+                    max={100}
+                  />
+                </div>
+              );
+            })}
           </div>
         </section>
       </div>

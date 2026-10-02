@@ -5,7 +5,6 @@ export default function SeeAllFavorites({
   showAllFavorites,
   closeFavoritesModal,
 }) {
-
   const navigate = useNavigate();
 
   return (
@@ -15,7 +14,7 @@ export default function SeeAllFavorites({
       <div className="sticky top-0 border-b border-[var(--accent)] bg-[var(--background)] z-10 py-4">
         <div className="ml-2 flex gap-2 items-center">
           <div className="bg-[var(--surface)] p-1 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer">
-          <ChevronLeft onClick={closeFavoritesModal} size={30} />
+            <ChevronLeft onClick={closeFavoritesModal} size={30} />
           </div>
           <h1 className="text-3xl ">{`${userData?.user?.fullName.split(" ").slice(0, 1).join("")}'s Favorites`}</h1>
         </div>

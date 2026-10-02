@@ -16,7 +16,6 @@ import {
 } from "firebase/firestore";
 import { getUserProfilePictureURL } from "./storage.js";
 
-
 export async function updateProfilePicture(uid, picture) {
   const userDocRef = doc(db, "users", uid);
 
@@ -38,10 +37,10 @@ export async function getUserDocument(uid) {
   const userDocSnap = await getDoc(userDocRef);
 
   if (userDocSnap.exists()) {
-    return  {
+    return {
       id: userDocSnap.id,
       ...userDocSnap.data(),
-    } 
+    };
   } else {
     console.log("No document exists.");
   }
@@ -88,12 +87,18 @@ export async function getMovieWatchListDocs(uid) {
 export async function addMovieToFavorites(uid, movieData) {
   await setDoc(doc(db, "users", uid, "favoriteMovies", String(movieData.id)), {
     ...movieData,
-  })
-};
+  });
+}
 
-export async function deleteMovieFromFavorites(uid, movieId){
-  const favoriteMovieDocRef = doc(db, "users", uid, "favoriteMovies", String(movieId))
-  await deleteDoc(favoriteMovieDocRef)
+export async function deleteMovieFromFavorites(uid, movieId) {
+  const favoriteMovieDocRef = doc(
+    db,
+    "users",
+    uid,
+    "favoriteMovies",
+    String(movieId),
+  );
+  await deleteDoc(favoriteMovieDocRef);
 }
 
 export async function getFavoriteMoviesDoc(uid) {
@@ -125,33 +130,57 @@ export async function findAFriend(userName) {
   });
 }
 
-export async function sendFriendRequest(currentUserId, requestedUserId,){
-  if (currentUserId === requestedUserId){
-    return
+export async function sendFriendRequest(currentUserId, requestedUserId) {
+  if (currentUserId === requestedUserId) {
+    return;
   }
-  
-  const batch = writeBatch(db)
 
-    const outgoingRequestDoc = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
-   const incomingRequestDoc = doc(db, "users", requestedUserId, "incomingRequests", currentUserId)
-
-    batch.set(outgoingRequestDoc, {
-    friendRequest: "pending",
-    createdAt: serverTimestamp(),
-   })
-
-   batch.set(incomingRequestDoc, {
-    createdAt: serverTimestamp(),
-   })
-
-   await batch.commit()
-}
-
-export async function removeFriend(currentUserId, removedFriendId){
   const batch = writeBatch(db);
 
-  const userFriendDoc = doc(db, "users", currentUserId, "Friends", removedFriendId);
-  const friendRemovedDoc = doc(db, "users", removedFriendId, "Friends", currentUserId);
+  const outgoingRequestDoc = doc(
+    db,
+    "users",
+    currentUserId,
+    "outgoingRequests",
+    requestedUserId,
+  );
+  const incomingRequestDoc = doc(
+    db,
+    "users",
+    requestedUserId,
+    "incomingRequests",
+    currentUserId,
+  );
+
+  batch.set(outgoingRequestDoc, {
+    friendRequest: "pending",
+    createdAt: serverTimestamp(),
+  });
+
+  batch.set(incomingRequestDoc, {
+    createdAt: serverTimestamp(),
+  });
+
+  await batch.commit();
+}
+
+export async function removeFriend(currentUserId, removedFriendId) {
+  const batch = writeBatch(db);
+
+  const userFriendDoc = doc(
+    db,
+    "users",
+    currentUserId,
+    "Friends",
+    removedFriendId,
+  );
+  const friendRemovedDoc = doc(
+    db,
+    "users",
+    removedFriendId,
+    "Friends",
+    currentUserId,
+  );
 
   batch.delete(userFriendDoc);
   batch.delete(friendRemovedDoc);
@@ -159,34 +188,46 @@ export async function removeFriend(currentUserId, removedFriendId){
   await batch.commit();
 }
 
-export async function acceptFriendRequest(currentUserId, requestSenderId){
-  const batch = writeBatch(db)
+export async function acceptFriendRequest(currentUserId, requestSenderId) {
+  const batch = writeBatch(db);
 
-  const outgoingRequestDoc = doc(db, "users", requestSenderId, "outgoingRequests", currentUserId)
-  const incomingRequestDoc = doc(db, "users", currentUserId, "incomingRequests", requestSenderId)
- 
-  const friendsDocCurrentUser = doc(db, "users", currentUserId, "Friends", requestSenderId)
-  const friendsDocRequestSender = doc(db, "users", requestSenderId, "Friends", currentUserId)
+  const outgoingRequestDoc = doc(
+    db,
+    "users",
+    requestSenderId,
+    "outgoingRequests",
+    currentUserId,
+  );
+  const incomingRequestDoc = doc(
+    db,
+    "users",
+    currentUserId,
+    "incomingRequests",
+    requestSenderId,
+  );
+
+  const friendsDocCurrentUser = doc(
+    db,
+    "users",
+    currentUserId,
+    "Friends",
+    requestSenderId,
+  );
+  const friendsDocRequestSender = doc(
+    db,
+    "users",
+    requestSenderId,
+    "Friends",
+    currentUserId,
+  );
 
   batch.set(friendsDocCurrentUser, {
-    acceptedAt: serverTimestamp(),  
-  })
+    acceptedAt: serverTimestamp(),
+  });
 
   batch.set(friendsDocRequestSender, {
     acceptedAt: serverTimestamp(),
-  })
-
-  batch.delete(outgoingRequestDoc)
-  batch.delete(incomingRequestDoc)
-
-  await batch.commit()
-}
-
-export async function declineFriendRequest(currentUserId, requestSenderId){
-  const batch = writeBatch(db)
-
-  const outgoingRequestDoc = doc(db, "users", requestSenderId, "outgoingRequests", currentUserId);
-  const incomingRequestDoc = doc(db, "users", currentUserId, "incomingRequests", requestSenderId);
+  });
 
   batch.delete(outgoingRequestDoc);
   batch.delete(incomingRequestDoc);
@@ -194,60 +235,103 @@ export async function declineFriendRequest(currentUserId, requestSenderId){
   await batch.commit();
 }
 
+export async function declineFriendRequest(currentUserId, requestSenderId) {
+  const batch = writeBatch(db);
 
+  const outgoingRequestDoc = doc(
+    db,
+    "users",
+    requestSenderId,
+    "outgoingRequests",
+    currentUserId,
+  );
+  const incomingRequestDoc = doc(
+    db,
+    "users",
+    currentUserId,
+    "incomingRequests",
+    requestSenderId,
+  );
 
-export async function checkFriendStatus(currentUserId, requestedUserId){
-  const outgoingRequestDocRef = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
-  const incomingRequestDocRef = doc(db, "users", currentUserId, "incomingRequests", requestedUserId);
-  const friendsDocRef = doc(db, "users", currentUserId, "Friends", requestedUserId)
+  batch.delete(outgoingRequestDoc);
+  batch.delete(incomingRequestDoc);
 
-  const [outgoingRequestSnap, incomingRequestSnap, friendsDocSnap] = await Promise.all([
-     getDoc(outgoingRequestDocRef),
-     getDoc(incomingRequestDocRef),
-     getDoc(friendsDocRef),
-  ])
+  await batch.commit();
+}
 
-  if(friendsDocSnap.exists()){
-    return "Friends"
-  } else if(outgoingRequestSnap.exists()){
-    return "Requested"
-  } else if (incomingRequestSnap.exists()){
-    return "Confirm"
+export async function checkFriendStatus(currentUserId, requestedUserId) {
+  const outgoingRequestDocRef = doc(
+    db,
+    "users",
+    currentUserId,
+    "outgoingRequests",
+    requestedUserId,
+  );
+  const incomingRequestDocRef = doc(
+    db,
+    "users",
+    currentUserId,
+    "incomingRequests",
+    requestedUserId,
+  );
+  const friendsDocRef = doc(
+    db,
+    "users",
+    currentUserId,
+    "Friends",
+    requestedUserId,
+  );
+
+  const [outgoingRequestSnap, incomingRequestSnap, friendsDocSnap] =
+    await Promise.all([
+      getDoc(outgoingRequestDocRef),
+      getDoc(incomingRequestDocRef),
+      getDoc(friendsDocRef),
+    ]);
+
+  if (friendsDocSnap.exists()) {
+    return "Friends";
+  } else if (outgoingRequestSnap.exists()) {
+    return "Requested";
+  } else if (incomingRequestSnap.exists()) {
+    return "Confirm";
   } else {
-    return "Add Friend"
+    return "Add Friend";
   }
-
 }
 
-export function listenForFriendRequests(currentUserId, callback){
-  const friendRequestsDoc = (collection(db, "users", currentUserId, "incomingRequests"))
+export function listenForFriendRequests(currentUserId, callback) {
+  const friendRequestsDoc = collection(
+    db,
+    "users",
+    currentUserId,
+    "incomingRequests",
+  );
 
- const unsubscribe = onSnapshot(friendRequestsDoc, (snapshot) => {
-      const requests = snapshot.docs.map((request) => {
-        return {
-          senderId: request.id,
-          ...request.data()
-        }
-      })
-      callback(requests)
-  })
+  const unsubscribe = onSnapshot(friendRequestsDoc, (snapshot) => {
+    const requests = snapshot.docs.map((request) => {
+      return {
+        senderId: request.id,
+        ...request.data(),
+      };
+    });
+    callback(requests);
+  });
 
-  return unsubscribe
-
+  return unsubscribe;
 }
 
-export function listenForNewFriends(currentUserId, callback){
-  const friendsDoc = (collection(db, "users", currentUserId, "Friends"))
+export function listenForNewFriends(currentUserId, callback) {
+  const friendsDoc = collection(db, "users", currentUserId, "Friends");
 
   const unsubscribe = onSnapshot(friendsDoc, (snapshot) => {
     const friends = snapshot.docs.map((friend) => {
       return {
         id: friend.id,
-        ...friend.data()
-      }
-    })
-    callback(friends)
-  })
+        ...friend.data(),
+      };
+    });
+    callback(friends);
+  });
   return unsubscribe;
-
 }

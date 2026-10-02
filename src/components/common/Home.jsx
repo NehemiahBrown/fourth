@@ -143,12 +143,12 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-4">
           <div>
-            <p className="text-lg font-bold">What Your Friends Are Watching</p>
+            <p className="text-lg font-bold">Friend Favorites</p>
             <hr className="w-[75%]" />
           </div>
           <div className="flex justify-center items-center h-[120px] border border-white/15">
             <p className="opacity-80 text-center w-[80%]">
-              See what your friends are watching, rating and loving!
+              Add friends to see what they're watching!
             </p>
           </div>
         </div>
