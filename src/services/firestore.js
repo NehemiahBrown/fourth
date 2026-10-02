@@ -111,7 +111,31 @@ export async function getFavoriteMoviesDoc(uid) {
   });
 }
 
+export async function getFriendsFavorites(array){
+
+  const friendsFavoriteMovies = await Promise.all(
+     array.map((friend) =>{
+       return getFavoriteMoviesDoc(friend.id)
+    })
+  )
+  return friendsFavoriteMovies
+}
+
 //Friends Documents
+
+export async function getFriends(uid){
+  const friendsDocQuery = query(collection(db, "users", uid, "Friends"), limit(25))
+
+  const friendsDocs = await getDocs(friendsDocQuery);
+
+  return friendsDocs.docs.map((friend) =>{
+    return {
+      id: friend.id,
+      ...friend.data()
+    }
+  })
+}
+
 export async function findAFriend(userName) {
   const userNameQuery = query(
     collection(db, "users"),
@@ -299,6 +323,7 @@ export async function checkFriendStatus(currentUserId, requestedUserId) {
     return "Add Friend";
   }
 }
+
 
 export function listenForFriendRequests(currentUserId, callback) {
   const friendRequestsDoc = collection(

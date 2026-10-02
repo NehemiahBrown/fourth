@@ -2,17 +2,67 @@ import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 
-import { getTrendingMovies, getUpcomingMovies } from "../../services/tmdb.js";
+import { getTrendingMovies, getUpcomingMovies,} from "../../services/tmdb.js";
+import {getFriends, getFriendsFavorites} from "../../services/firestore.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function Home() {
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [upcomingMovies, setUpcomingMovies] = useState([]);
   const [recentlyWatched, setRecentlyWatched] = useState([]);
+  const [friendsData, setFriendsData ] = useState([]);
+  const [friendsFavoriteMovies, setFriendsFavoriteMovies] = useState([])
+
+  const { currentUser } = useAuth();
 
   const trendingRef = useRef(null);
   const upcomingRef = useRef(null);
+  const friendsFavoriteRef = useRef(null)
 
   const navigate = useNavigate();
+
+
+  useEffect(() =>{
+    const handleGettingFriends = async () => {
+      const friends = await getFriends(currentUser?.uid)
+      setFriendsData(friends)
+    }
+    handleGettingFriends();
+  }, [])
+
+  useEffect(() => {
+    if (friendsData.length === 0 ){
+      setFriendsFavoriteMovies([])
+      return
+    }
+
+    const getFriendsFavoriteMovieArray = async () => {
+      const array = await getFriendsFavorites(friendsData)
+      const combinedArray = array.flat();
+      const movieCounts = combinedArray.reduce((counts, movie) => {
+          if(counts[movie.id]){
+            counts[movie.id].friendCount += 1;
+          } else {
+            counts[movie.id] = {
+              movie,
+              friendCount: 1,
+            }
+          }
+          return counts
+      }, {})
+  if(movieCounts){
+    const friendsFavoriteMoviesArray = Object.entries(movieCounts)
+    .sort((a, b) => b[1].friendCount - a[1].friendCount)
+    .slice(0, 3);
+    setFriendsFavoriteMovies(friendsFavoriteMoviesArray)
+  }}
+    getFriendsFavoriteMovieArray();
+  }, [friendsData])
+
+  console.log(friendsFavoriteMovies)
+
+  
+  
 
   //   Get trending movie data
   useEffect(() => {
@@ -146,11 +196,43 @@ export default function Home() {
             <p className="text-lg font-bold">Friend Favorites</p>
             <hr className="w-[75%]" />
           </div>
+          {friendsFavoriteMovies.length <= 0 ? 
           <div className="flex justify-center items-center h-[120px] border border-white/15">
             <p className="opacity-80 text-center w-[80%]">
               Add friends to see what they're watching!
             </p>
-          </div>
+          </div> : 
+          <div className="relative">
+            <button
+              onClick={() => scrollLeft(friendsFavoriteRef)}
+              className="hidden md:block absolute carouselArrow top-0 bottom-0 left-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
+            >
+              <ChevronLeft size={80} />
+            </button>
+            <div
+              className=" flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory"
+              ref={friendsFavoriteRef}
+            >
+              {friendsFavoriteMovies.map((movie) => {
+                return (
+                  <div key={movie[0]} className="shrink-0 snap-start">
+                    <img
+                      onClick={() => navigate(`/movie/${movie[0]}`)}
+                      src={movie[1].movie.poster}
+                      alt={movie[1].movie.title}
+                      className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => scrollRight(friendsFavoriteRef)}
+              className="hidden md:block absolute carouselArrow top-0 bottom-0 right-0 z-10 opacity-0 bg-transparent active:bg-black/50 transition-colors duration-500 cursor-pointer"
+            >
+              <ChevronRight size={80} />
+            </button>
+          </div>}
         </div>
       </div>
     </main>
