@@ -1,6 +1,13 @@
-import { Search } from "lucide-react";
+import { Search, ChevronRight } from "lucide-react";
 
-import { findAFriend, listenForFriendRequests, getUserDocument } from "../../services/firestore";
+import { 
+  findAFriend, 
+  listenForFriendRequests, 
+  listenForNewFriends,
+  getUserDocument, 
+  declineFriendRequest,
+  acceptFriendRequest,
+   } from "../../services/firestore";
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
@@ -17,9 +24,19 @@ export default function Friends() {
   const [friendSearchResults, setFriendSearchResults] = useState([]);
   const [friendRequests, setFriendRequests] = useState([])
   const [friendRequestUsers, setFriendRequestUsers] = useState([])
+  const [friends, setFriends] = useState([]);
+  const [friendsData, setFriendsData] = useState([])
 
   function captureFriendInputValue(e) {
     setFriendInputValue(e.target.value);
+  }
+  // handling adding and declining friend requests
+  async function handleDecliningRequests(userId){
+    await declineFriendRequest(currentUser.uid, userId)
+  }
+
+  async function handleAddingFriends(userId){
+    await acceptFriendRequest(currentUser.uid, userId)
   }
 
   useEffect(() => {
@@ -45,6 +62,7 @@ export default function Friends() {
     return unsubscribe
   }, [currentUser?.uid])
 
+  // function to get friend requests data for UI rendering
   useEffect(() => {
     const fetchFriendRequestUsers = async () => {
       const users = await Promise.all(
@@ -57,7 +75,30 @@ export default function Friends() {
     fetchFriendRequestUsers()
   }, [friendRequests])
 
-  console.log(friendRequestUsers)
+
+// Listener for new friends
+  useEffect(() =>{
+    if(!currentUser?.uid){
+      return
+    }
+    const unsubscribe = listenForNewFriends(currentUser.uid, setFriends)
+    return unsubscribe
+  }, [currentUser?.uid])
+
+  // function to get friend data for UI rendering
+  useEffect(() => {
+    const fetchFriends = async () => {
+      const allFriends = await Promise.all(
+        friends.map((friend) => {
+          return getUserDocument(friend.id)
+        })
+      )
+      setFriendsData(allFriends)
+    }
+    fetchFriends()
+  }, [friends])
+
+  console.log(friendsData)
 
   return (
     <main>
@@ -119,7 +160,7 @@ export default function Friends() {
                   <div key={user?.id} className="h-[65px] flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <div className="shrink-0"> 
-                        <img src={user?.profilePicture} alt=""  className="w-[55px] h-[55px] rounded-full "/>
+                        <img src={`${user?.profilePicture ? user?.profilePicture : UserAvatar}`}  alt={`${user?.userName}'s profile pciture.`}  className="w-[55px] h-[55px] rounded-full"/>
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-lg truncate">{user?.fullName}</p>
@@ -127,10 +168,10 @@ export default function Friends() {
                       </div>
                     </div>
                     <div className="flex gap-2 shrink-0">
-                      <button className="bg-[var(--accent-dark)] text-white py-1 px-2 rounded-sm">
+                      <button onClick={() => handleAddingFriends(user?.id)} className="bg-[var(--accent-dark)] text-white py-1 px-2 rounded-sm cursor-pointer transition-all duration-200">
                         Accept
                       </button>
-                      <button className="border border-gray-600 text-gray-300 py-1 px-2 rounded-sm">
+                      <button onClick={() => handleDecliningRequests(user?.id)} className="border border-gray-600 text-gray-300 py-1 px-2 rounded-sm cursor-pointer hover:bg-[var(--accent)] hover:text-white hover:border-white">
                         Decline
                       </button>
                     </div>
@@ -144,6 +185,25 @@ export default function Friends() {
           <p className="text-xl font-bold">Friends</p>
         </div>
           <hr className="mt-2"/>
+          <div className="flex flex-col gap-4 py-6">
+            {friendsData.map((friend) => {
+              return (
+                <div key={friend.id} onClick={() => navigate(`/users/${friend?.id}`)}
+                className="relative flex items-center gap-4 py-2 cursor-pointer">
+                  <div>
+                    <img src={`${friend?.profilePicture ? friend?.profilePicture : UserAvatar}`} alt={`${friend?.userName}'s profile pciture.`} className="w-[55px] h-[55px] rounded-full"/>
+                  </div>
+                  <div>
+                    <p className="text-lg">{friend?.fullName}</p>
+                    <p className="text-[var(--primary-text)]/80">{friend?.userName}</p>
+                  </div>
+                  <div className="absolute bottom-1 right-2">
+                    <ChevronRight/>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
       </section>
     </main>
   );

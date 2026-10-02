@@ -8,6 +8,7 @@ import {
   sendFriendRequest,
   checkFriendStatus,
   acceptFriendRequest,
+  removeFriend,
 } from "../../services/firestore.js";
 
 import UserAvatar from "../../assets/userAvatar.png"
@@ -23,10 +24,11 @@ export default function SearchedUserProfile() {
   const { currentUser } = useAuth();
 
   const [userData, setUserData] = useState({});
-  const [friends, setFriends] = useState([]);
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [topGenres, setTopGenres] = useState([]);
+  const [friends, setFriends] = useState([])
   const [friendStatus, setFriendStatus] = useState(null);
+  const [optionsDropdown, setOptionsDropdown] = useState(false)
 
   function openFavoritesModal() {
     setShowAllFavorites(true);
@@ -34,6 +36,10 @@ export default function SearchedUserProfile() {
 
   function closeFavoritesModal() {
     setShowAllFavorites(false);
+  }
+
+  function toggleOptionsDropdown(){
+    setOptionsDropdown(current => !current)
   }
 
   // Formual for collecting all of the instances of favorited movie's genres.
@@ -69,6 +75,11 @@ export default function SearchedUserProfile() {
       setFriendStatus("Friends")
     }
     }
+
+  async function handleRemovingFriends(){
+    await removeFriend(currentUser.uid, userId)
+    setFriendStatus("Add Friend")
+  }
     
 
 
@@ -93,12 +104,15 @@ export default function SearchedUserProfile() {
   console.log(userData);
 
   useEffect(() => {
+    if(!currentUser?.uid){
+      return 
+    }
     const checkFriendRequestStatus = async () => {
       const status = await checkFriendStatus(currentUser.uid, userId);
       setFriendStatus(status)
     }
     checkFriendRequestStatus()
-  }, [userId])
+  }, [userId, currentUser?.uid])
 
   return (
     <main>
@@ -124,9 +138,15 @@ export default function SearchedUserProfile() {
 
               {friendStatus}
             </button>
-            <button className="flex items-center justify-center w-[60px] h-[40px] bg-[var(--accent)] py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
-              <Ellipsis />
-            </button>
+            <div className="relative md:flex md:gap-2 md:items-center">
+              <button onClick={toggleOptionsDropdown} className="flex items-center justify-center w-[60px] h-[40px] bg-[var(--accent)] py-2 rounded-md text-lg font-bold cursor-pointer active:scale-96 hover:bg-[var(--accent)]/80 transform-colors duration-200">
+                <Ellipsis />
+              </button>
+              {optionsDropdown && <div onClick={handleRemovingFriends} className="absolute md:static bg-white/60 px-4 py-2 rounded-sm mt-1 cursor-pointer">
+                <p className="text-nowrap">Remove Friend</p>
+              </div>}
+            </div>
+           
           </div>
           </div>
           
@@ -157,7 +177,7 @@ export default function SearchedUserProfile() {
           </button>
         </div>
         <div className="flex gap-2 mt-6">
-          {userData?.favorites?.map((movie, index) => {
+          {userData?.favorites?.slice(0, 6).map((movie, index) => {
             return (
               <div
                 key={movie?.id}
@@ -166,7 +186,7 @@ export default function SearchedUserProfile() {
                 <img
                   src={movie?.poster}
                   alt={movie?.title}
-                  className="aspect-[2/3] border border-white/15 object-cover"
+                  className="aspect-[2/3] w-[9rem] md:w-[10rem] lg:w-[11rem] border border-white/15 object-cover"
                 />
               </div>
             );

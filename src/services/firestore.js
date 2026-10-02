@@ -147,6 +147,18 @@ export async function sendFriendRequest(currentUserId, requestedUserId,){
    await batch.commit()
 }
 
+export async function removeFriend(currentUserId, removedFriendId){
+  const batch = writeBatch(db);
+
+  const userFriendDoc = doc(db, "users", currentUserId, "Friends", removedFriendId);
+  const friendRemovedDoc = doc(db, "users", removedFriendId, "Friends", currentUserId);
+
+  batch.delete(userFriendDoc);
+  batch.delete(friendRemovedDoc);
+
+  await batch.commit();
+}
+
 export async function acceptFriendRequest(currentUserId, requestSenderId){
   const batch = writeBatch(db)
 
@@ -169,6 +181,20 @@ export async function acceptFriendRequest(currentUserId, requestSenderId){
 
   await batch.commit()
 }
+
+export async function declineFriendRequest(currentUserId, requestSenderId){
+  const batch = writeBatch(db)
+
+  const outgoingRequestDoc = doc(db, "users", requestSenderId, "outgoingRequests", currentUserId);
+  const incomingRequestDoc = doc(db, "users", currentUserId, "incomingRequests", requestSenderId);
+
+  batch.delete(outgoingRequestDoc);
+  batch.delete(incomingRequestDoc);
+
+  await batch.commit();
+}
+
+
 
 export async function checkFriendStatus(currentUserId, requestedUserId){
   const outgoingRequestDocRef = doc(db, "users", currentUserId, "outgoingRequests", requestedUserId)
@@ -207,5 +233,21 @@ export function listenForFriendRequests(currentUserId, callback){
   })
 
   return unsubscribe
+
+}
+
+export function listenForNewFriends(currentUserId, callback){
+  const friendsDoc = (collection(db, "users", currentUserId, "Friends"))
+
+  const unsubscribe = onSnapshot(friendsDoc, (snapshot) => {
+    const friends = snapshot.docs.map((friend) => {
+      return {
+        id: friend.id,
+        ...friend.data()
+      }
+    })
+    callback(friends)
+  })
+  return unsubscribe;
 
 }
