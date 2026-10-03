@@ -13,11 +13,10 @@ import { useAuth } from "../../context/AuthContext.jsx";
 export default function Home() {
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [upcomingMovies, setUpcomingMovies] = useState([]);
-  const [recentlyWatched, setRecentlyWatched] = useState([]);
   const [friendsData, setFriendsData] = useState([]);
   const [friendsFavoriteMovies, setFriendsFavoriteMovies] = useState([]);
   const [searchedMovies, setSearchedMovies] = useState("");
-  const [searchResults, setSearchResults] = useState();
+  const [searchResults, setSearchResults] = useState([]);
 
   const { currentUser } = useAuth();
 
@@ -36,9 +35,15 @@ export default function Home() {
     if (searchedMovies.length > 2) {
       const getSearchedMovies = async () => {
         const movies = await getMovies(searchedMovies);
-        setSearchResults(movies);
+        const moviesWithPosters = movies?.filter((movie) => {
+          return movie?.poster !== null;
+        });
+        setSearchResults(moviesWithPosters);
       };
       getSearchedMovies();
+    } else {
+      setSearchResults([]);
+      return;
     }
   }, [searchedMovies]);
 
@@ -50,7 +55,7 @@ export default function Home() {
       setFriendsData(friends);
     };
     handleGettingFriends();
-  }, []);
+  }, [currentUser.uid]);
 
   useEffect(() => {
     if (friendsData.length === 0) {
@@ -123,19 +128,48 @@ export default function Home() {
 
   return (
     <main>
-      <form className="relative w-full mt-6 px-2">
-        <input
-          type="search"
-          value={searchedMovies}
-          onChange={handleSearchBarChange}
-          className="h-[35px] w-full pl-[8px] bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)] rounded-md"
-          placeholder="Search movies, actors, directors..."
-        />
-        <Search
-          size={20}
-          className="absolute -translate-y-1/2 top-[50%] right-[15px]"
-        />
-      </form>
+      <section className="relative">
+        <form className="relative w-full mt-6 px-2">
+          <input
+            type="text"
+            value={searchedMovies}
+            onChange={handleSearchBarChange}
+            className="h-[35px] w-full pl-[8px] bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)] rounded-md"
+            placeholder="Search movies, actors, directors..."
+          />
+          <Search
+            size={20}
+            className="absolute -translate-y-1/2 top-[50%] right-[15px]"
+          />
+        </form>
+        {searchedMovies.length > 2 && (
+          <div className="absolute left-1/2 -translate-x-1/2 top-12 z-100 flex flex-col gap-2 bg-[var(--surface)] w-[98%] mx-auto py-1 px-2 max-h-[300px] md:max-h-[400px] overflow-y-scroll rounded-sm">
+            {searchResults.slice(0, 15).map((result) => {
+              return (
+                <div
+                  key={result.id}
+                  onClick={() => navigate(`/movie/${result.id}`)}
+                  className="flex gap-2 py-2 border-y border-[var(--accent)]/40 cursor-pointer"
+                >
+                  <div>
+                    <img
+                      className="w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] md:w-[80px] md:h-[80px]"
+                      src={result?.poster}
+                      alt={`${result?.title}'s poster.`}
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate">{result?.title}</p>
+                    <p className="text-xs text-[var(--primary-text)]/70">
+                      {result?.releaseDate}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
       <div className="flex flex-col gap-6 mt-6">
         <div className="flex flex-col gap-4">
           <div>

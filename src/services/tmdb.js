@@ -19,18 +19,21 @@ export async function getAPI(endpoint) {
   }
 }
 
-export async function getMovies(movieName){
-  const movies = await getAPI(`search/movie?query=${movieName}`)
-  
+export async function getMovies(movieName) {
+  const movies = await getAPI(`search/movie?query=${movieName}`);
+
   const movieResultsObject = movies.results.map((movie) => {
     return {
-      id: movie.id, 
+      id: movie.id,
       title: movie.title,
-      poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      poster:
+        movie.poster_path === null
+          ? null
+          : `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
       releaseDate: movie.release_date,
-  }
-})
-return movieResultsObject;
+    };
+  });
+  return movieResultsObject;
 }
 
 export async function getUpcomingMovies() {
@@ -96,7 +99,7 @@ export async function getMovieDetails(movieId) {
   const trailer = movie.videos.results.find(
     (video) => video.site === "YouTube" && video.type === "Trailer",
   );
-  
+
   const movieDetailedData = {
     id: movie.id,
     title: movie.title,
@@ -133,18 +136,16 @@ export async function getMovieDetails(movieId) {
 export async function getCastDetails(castId) {
   const castMember = await getAPI(`person/${castId}`);
 
+  const castData = {
+    id: castMember.id,
+    name: castMember.name,
+    biography: castMember.biography,
+    picture: castMember.profile_path
+      ? `https://image.tmdb.org/t/p/w500${castMember.profile_path}`
+      : null,
+    birthday: castMember.birthday,
+    birthplace: castMember.place_of_birth,
+  };
 
-   const castData =
-        {
-          id: castMember.id,
-          name: castMember.name,
-          biography: castMember.biography,
-          picture: castMember.profile_path
-          ? `https://image.tmdb.org/t/p/w500${castMember.profile_path}`
-          : null,
-          birthday: castMember.birthday,
-          birthplace: castMember.place_of_birth,
-        }
-     
   return castData;
 }
