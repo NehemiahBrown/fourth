@@ -161,9 +161,9 @@ export default function Friends() {
             return (
               <div
                 key={user?.id}
-                className="h-[65px] flex items-center justify-between gap-4"
+                className="h-[65px] flex items-center justify-between gap-2"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="shrink-0">
                     <img
                       src={`${user?.profilePicture ? user?.profilePicture : UserAvatar}`}
@@ -176,7 +176,7 @@ export default function Friends() {
                     <p className="text-[var(--primary-text)]/80 truncate">{`@${user?.userName}`}</p>
                   </div>
                 </div>
-                <div className="flex gap-2 shrink-0">
+                <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => handleAddingFriends(user?.id)}
                     className="bg-[var(--accent-dark)] text-white py-1 px-2 rounded-sm cursor-pointer transition-all duration-200"
