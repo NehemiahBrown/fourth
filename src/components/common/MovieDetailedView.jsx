@@ -20,8 +20,8 @@ import {
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
-import TrailerModal from "./TrailerModal.jsx";
-import CastMemberModal from "./CastMemberModal.jsx";
+import TrailerModal from "../modals/TrailerModal.jsx";
+import CastMemberModal from "../modals/CastMemberModal.jsx";
 
 export default function MovieDetailedView() {
   const { movieId } = useParams();

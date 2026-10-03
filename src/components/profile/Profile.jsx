@@ -1,5 +1,5 @@
 import UserAvatar from "../../assets/userAvatar.png";
-import ProfilePictureModal from "./ProfilePictureModal.jsx";
+import ProfilePictureModal from "../modals/ProfilePictureModal.jsx";
 
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useFavoriteMovies } from "../../context/FavoriteMoviesContext.jsx";

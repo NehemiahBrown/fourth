@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import MainHeader from "../components/layout/MainHeader";
 import MainFooter from "../components/layout/MainFooter";
-import MobileNav from "../components/common/MobileNav.jsx";
+import MobileNav from "../components/navigation/MobileNav.jsx";
 
 export default function RootLayout() {
   const location = useLocation();

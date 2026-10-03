@@ -1,22 +1,22 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { WatchListProvider } from "./context/WatchListContext.jsx";
-import { FavoriteMoviesProvider } from "./context/FavoriteMoviesContext.jsx"
+import { FavoriteMoviesProvider } from "./context/FavoriteMoviesContext.jsx";
 import { AuthRequired } from "./layouts/AuthRequired.jsx";
 
 import SignUp from "./components/auth/SignUp";
 import LogIn from "./components/auth/LogIn";
 import Landing from "./components/auth/Landing";
 import MovieDetailedView from "./components/common/MovieDetailedView.jsx";
-import UserProfile from "./components/common/UserProfile.jsx"
-import WatchList from "./components/common/WatchList.jsx";
-import Friends from "./components/common/Friends.jsx";
-import Profile from "./components/common/Profile.jsx";
+import UserProfile from "./components/profile/UserProfile.jsx";
+import WatchList from "./components/watchlist/WatchList.jsx";
+import Friends from "./components/friends/Friends.jsx";
+import Profile from "./components/profile/Profile.jsx";
 
 import RootLayout from "./layouts/RootLayout";
 import PublicLayout from "./layouts/PublicLayout";
 
-import Home from "./components/common/Home";
+import Home from "./components/home/Home.jsx";
 
 export default function App() {
   return (
@@ -24,25 +24,28 @@ export default function App() {
       <AuthProvider>
         <WatchListProvider>
           <FavoriteMoviesProvider>
-          <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Landing />} />
-              <Route path="signup" element={<SignUp />} />
-              <Route path="login" element={<LogIn />} />
-            </Route>
-            <Route element={<AuthRequired />}>
-              <Route element={<RootLayout />}>
-                <Route path="/app" element={<Home />} />
-                <Route path="/watchlist" element={<WatchList />} />
-                <Route path="/friends" element={<Friends />} />
-                {/* The logged in user's profile */}
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/movie/:movieId" element={<MovieDetailedView />} />
-                 {/* The profile page for searched users */}
-                <Route path="/users/:userId" element={<UserProfile />}/>
+            <Routes>
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<Landing />} />
+                <Route path="signup" element={<SignUp />} />
+                <Route path="login" element={<LogIn />} />
               </Route>
-            </Route>
-          </Routes>
+              <Route element={<AuthRequired />}>
+                <Route element={<RootLayout />}>
+                  <Route path="/app" element={<Home />} />
+                  <Route path="/watchlist" element={<WatchList />} />
+                  <Route path="/friends" element={<Friends />} />
+                  {/* The logged in user's profile */}
+                  <Route path="/profile" element={<Profile />} />
+                  <Route
+                    path="/movie/:movieId"
+                    element={<MovieDetailedView />}
+                  />
+                  {/* The profile page for searched users */}
+                  <Route path="/users/:userId" element={<UserProfile />} />
+                </Route>
+              </Route>
+            </Routes>
           </FavoriteMoviesProvider>
         </WatchListProvider>
       </AuthProvider>

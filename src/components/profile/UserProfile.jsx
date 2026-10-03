@@ -22,7 +22,7 @@ import {
   Handshake,
 } from "lucide-react";
 
-import SeeAllFavorites from "./SeeAllFavorites.jsx";
+import SeeAllFavorites from "../common/SeeAllFavorites.jsx";
 
 import { useAuth } from "../../context/AuthContext.jsx";
 
