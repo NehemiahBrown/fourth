@@ -2,7 +2,7 @@ import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
 
-import { getTrendingMovies, getUpcomingMovies,} from "../../services/tmdb.js";
+import { getTrendingMovies, getUpcomingMovies, getMovies} from "../../services/tmdb.js";
 import {getFriends, getFriendsFavorites} from "../../services/firestore.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -12,6 +12,8 @@ export default function Home() {
   const [recentlyWatched, setRecentlyWatched] = useState([]);
   const [friendsData, setFriendsData ] = useState([]);
   const [friendsFavoriteMovies, setFriendsFavoriteMovies] = useState([])
+  const [searchedMovies, setSearchedMovies] = useState("");
+  const [searchResults, setSearchResults] = useState();
 
   const { currentUser } = useAuth();
 
@@ -20,6 +22,24 @@ export default function Home() {
   const friendsFavoriteRef = useRef(null)
 
   const navigate = useNavigate();
+
+  const handleSearchBarChange = (e) =>{
+    const searchedMovieValue = e.target.value;
+    setSearchedMovies(searchedMovieValue)
+  }
+
+  useEffect(() => {
+    if(searchedMovies.length > 2){
+      const getSearchedMovies = async () => {
+        const movies = await getMovies(searchedMovies)
+        setSearchResults(movies)
+      }
+      getSearchedMovies()
+    }
+    
+  }, [searchedMovies])
+
+  console.log(searchResults)
 
 
   useEffect(() =>{
@@ -58,9 +78,6 @@ export default function Home() {
   }}
     getFriendsFavoriteMovieArray();
   }, [friendsData])
-
-  console.log(friendsFavoriteMovies)
-
   
   
 
@@ -105,9 +122,11 @@ export default function Home() {
 
   return (
     <main>
-      <div className="relative w-full mt-6 px-2">
+      <form className="relative w-full mt-6 px-2">
         <input
           type="search"
+          value={searchedMovies}
+          onChange={handleSearchBarChange}
           className="h-[35px] w-full pl-[8px] bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)] rounded-md"
           placeholder="Search movies, actors, directors..."
         />
@@ -115,7 +134,7 @@ export default function Home() {
           size={20}
           className="absolute -translate-y-1/2 top-[50%] right-[15px]"
         />
-      </div>
+      </form>
       <div className="flex flex-col gap-6 mt-6">
         <div className="flex flex-col gap-4">
           <div>

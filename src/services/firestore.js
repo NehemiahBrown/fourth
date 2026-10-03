@@ -70,7 +70,6 @@ export async function deleteMovieFromWatchList(uid, movieId) {
     "watchlist",
     String(movieId),
   );
-
   await deleteDoc(watchListMovieDocRef);
 }
 

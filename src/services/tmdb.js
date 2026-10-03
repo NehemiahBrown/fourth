@@ -19,6 +19,20 @@ export async function getAPI(endpoint) {
   }
 }
 
+export async function getMovies(movieName){
+  const movies = await getAPI(`search/movie?query=${movieName}`)
+  
+  const movieResultsObject = movies.results.map((movie) => {
+    return {
+      id: movie.id, 
+      title: movie.title,
+      poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      releaseDate: movie.release_date,
+  }
+})
+return movieResultsObject;
+}
+
 export async function getUpcomingMovies() {
   const moviesPage1 = await getAPI("movie/upcoming?language=en-US&page=1");
   const moviesPage2 = await getAPI("movie/upcoming?language=en-US&page=2");
