@@ -109,8 +109,8 @@ export default function SignUp() {
             >
               Create Account
             </button>
-            <p className="text-xs text-center">
-              Already have an account? <span>Log in</span>
+            <p className="text-sm text-center">
+              Already have an account? <span className="underline cursor-pointer" onClick={() => navigate("/login")}>Log in</span>
             </p>
           </div>
         </form>

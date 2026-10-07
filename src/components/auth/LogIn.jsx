@@ -68,8 +68,8 @@ export default function LogIn() {
             >
               Log In
             </button>
-            <p className="text-xs text-center">
-              Don't have an account? <span>Sign up</span>
+            <p className="text-sm text-center">
+              Don't have an account? <span className="underline cursor-pointer" onClick={() => navigate("/signup")}>Sign up</span>
             </p>
           </div>
         </form>
