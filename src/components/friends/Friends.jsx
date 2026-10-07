@@ -1,4 +1,5 @@
 import { Search, ChevronRight } from "lucide-react";
+import ShowFriendsModal from "../modals/ShowFriendsModal.jsx";
 
 import {
   findAFriend,
@@ -26,6 +27,7 @@ export default function Friends() {
   const [friendRequestUsers, setFriendRequestUsers] = useState([]);
   const [friends, setFriends] = useState([]);
   const [friendsData, setFriendsData] = useState([]);
+  const [showFriendsModal, setShowFriendsModal] = useState(false);
 
   function captureFriendInputValue(e) {
     setFriendInputValue(e.target.value);
@@ -237,6 +239,7 @@ export default function Friends() {
             Show All
           </button>
         </div>
+        {showFriendsModal && <ShowFriendsModal/>}
       </section>
     </main>
   );
