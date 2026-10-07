@@ -161,7 +161,8 @@ export default function Friends() {
             return (
               <div
                 key={user?.id}
-                className="h-[65px] flex items-center justify-between gap-2"
+                onClick={() => navigate(`/users/${user?.id}`)}
+                className="h-[65px] flex items-center justify-between gap-2 cursor-pointer"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="shrink-0">
@@ -202,7 +203,7 @@ export default function Friends() {
         </div>
         <hr className="mt-2" />
         <div className="flex flex-col gap-4 py-6">
-          {friendsData.map((friend) => {
+          {friendsData.slice(0, 4).map((friend) => {
             return (
               <div
                 key={friend.id}
@@ -228,6 +229,11 @@ export default function Friends() {
               </div>
             );
           })}
+        </div>
+        <div className="mt-4 float-end">
+          <button className="bg-[var(--accent)] py-1 px-2 rounded-sm cursor-pointer active:scale-95">
+            Show All
+          </button>
         </div>
       </section>
     </main>

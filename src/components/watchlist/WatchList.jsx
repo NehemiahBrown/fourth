@@ -3,6 +3,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import FourthIcon from "../../assets/fourthicon.png";
+``;
 
 export default function WatchList() {
   const { watchListMovies, removeFromWatchList, addToWatchList } =
@@ -283,7 +284,7 @@ export default function WatchList() {
               })
             )}
           </div>
-          {moviesShown <= sortedMovies.length && (
+          {moviesShown < sortedMovies.length && (
             <div className="mx-auto mt-6 w-[70%] max-w-[150px]">
               <button
                 onClick={loadMoreMovies}

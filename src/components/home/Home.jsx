@@ -47,8 +47,6 @@ export default function Home() {
     }
   }, [searchedMovies]);
 
-  console.log(searchResults);
-
   useEffect(() => {
     const handleGettingFriends = async () => {
       const friends = await getFriends(currentUser?.uid);
@@ -135,7 +133,7 @@ export default function Home() {
             value={searchedMovies}
             onChange={handleSearchBarChange}
             className="h-[35px] w-full pl-[8px] bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)] rounded-md"
-            placeholder="Search movies, actors, directors..."
+            placeholder="Search any movie title..."
           />
           <Search
             size={20}
