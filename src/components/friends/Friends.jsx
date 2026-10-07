@@ -161,10 +161,12 @@ export default function Friends() {
             return (
               <div
                 key={user?.id}
-                onClick={() => navigate(`/users/${user?.id}`)}
                 className="h-[65px] flex items-center justify-between gap-2 cursor-pointer"
               >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div
+                  onClick={() => navigate(`/users/${user?.id}`)}
+                  className="flex items-center gap-3 flex-1 min-w-0"
+                >
                   <div className="shrink-0">
                     <img
                       src={`${user?.profilePicture ? user?.profilePicture : UserAvatar}`}
