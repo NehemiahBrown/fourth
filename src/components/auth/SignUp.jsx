@@ -2,7 +2,7 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase.js";
 import { createUserDocument } from "../../services/firestore.js";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
 export default function SignUp() {
@@ -28,20 +28,26 @@ export default function SignUp() {
     };
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password)
           const user = userCredential.user;
-          createUserDocument(user.uid, userData);
-        })
-        .then(() => {
-          navigate("/app");
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-    } catch (err) {
-      console.log(err.message);
-    }
+
+         if(user) {
+            await createUserDocument(user.uid, userData);
+            navigate("/app");
+        }
+        } catch (err) {
+          switch(err.code){
+            case "auth/email-already-in-use":
+              setErrorMessage("Email already in use.")
+              break;
+            case "auth/too-many-requests":
+              setErrorMessage("Too many requests. Try again later.");
+              break;
+            default:
+              setErrorMessage("Something went wrong. Please try again");
+          }
+          console.log(err.code);
+        }
   }
 
   return (
@@ -57,6 +63,7 @@ export default function SignUp() {
           action=""
           className="flex flex-col gap-4 w-full max-w-[400px]"
         >
+          {errorMessage && <p className="text-[var(--color-error)]">{errorMessage}</p>}
           <div className="flex flex-col gap-1">
             <label className="block" htmlFor="newName">
               FULL NAME
@@ -66,6 +73,7 @@ export default function SignUp() {
               id="newName"
               name="newName"
               className="pl-[5px] h-[40px] w-full bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)]"
+              required
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -77,6 +85,8 @@ export default function SignUp() {
               id="newUsername"
               name="newUsername"
               className="pl-[5px] h-[40px] w-full bg-[var(--surface)]  border border-white/5 border-b-white/15 shadow-[var(--shadow-input)]"
+              required
+              maxLength="18"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -88,6 +98,7 @@ export default function SignUp() {
               id="newEmail"
               name="newEmail"
               className="pl-[5px] h-[40px] w-full bg-[var(--surface)]  border border-white/5 border-b-white/15 shadow-[var(--shadow-input)]"
+              required            
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -99,6 +110,8 @@ export default function SignUp() {
               id="newPassword"
               name="newPassword"
               className="pl-[5px] h-[40px] w-full bg-[var(--surface)]  border border-white/5 border-b-white/15 shadow-[var(--shadow-input)]"
+              minLength="8"
+              required
             />
           </div>
 

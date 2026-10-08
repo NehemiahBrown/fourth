@@ -11,18 +11,28 @@ export default function LogIn() {
     e.preventDefault();
     setErrorMessage("");
 
-    const userEmail = e.target.userEmail.value;
+    const userEmail = e.target.userEmail.value.trim();
     const userPassword = e.target.userPassword.value;
+
     try {
       await logIn(userEmail, userPassword)
-        .then(() => {
-          navigate("/app");
-        })
-        .catch((error) => {
-          console.log("Error: ", error.message);
-        });
+      navigate("/app");
     } catch (err) {
-      console.log(err.message);
+      switch(err.code){
+        case "auth/invalid-credential":
+          setErrorMessage("Email or password incorrect. Please try again.")
+          break;
+        case "auth/network-request-failed":
+          setErrorMessage("Check your internet connection");
+          break;
+        case "auth/too-many-requests":
+          setErrorMessage("Too many requests. Try again later.");
+          break;
+        
+        default:
+          setErrorMessage("Something went wrong. Please try again.")
+      }
+      console.log(err.code)
     }
   }
 
@@ -35,9 +45,9 @@ export default function LogIn() {
 
         <form
           onSubmit={signUserIn}
-          action=""
           className="flex flex-col gap-4 w-full max-w-[400px]"
         >
+          <p className="text-[var(--color-error)]">{errorMessage}</p>
           <div className="flex flex-col gap-1">
             <label className="block" htmlFor="userEmail">
               EMAIL
@@ -47,6 +57,7 @@ export default function LogIn() {
               id="userEmail"
               name="userEmail"
               className="pl-[5px] h-[40px] w-full bg-[var(--surface)]  border border-white/5 border-b-white/15 shadow-[var(--shadow-input)]"
+              required
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -58,6 +69,8 @@ export default function LogIn() {
               id="userPassword"
               name="userPassword"
               className="pl-[5px] h-[40px] w-full bg-[var(--surface)]  border border-white/5 border-b-white/15 shadow-[var(--shadow-input)]"
+              required
+              
             />
           </div>
 
