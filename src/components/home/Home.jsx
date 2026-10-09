@@ -1,6 +1,7 @@
 import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
+import HomeLoading from "../loading/HomeLoading.jsx"
 
 import {
   getTrendingMovies,
@@ -17,6 +18,13 @@ export default function Home() {
   const [friendsFavoriteMovies, setFriendsFavoriteMovies] = useState([]);
   const [searchedMovies, setSearchedMovies] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  const [trendingLoading, setTrendingLoading] = useState(true);
+  const [upcomingLoading, setUpcomingLoading] = useState(true);
+  const [friendsLoading, setFriendsLoading] = useState(true);
+  const [friendsDataLoading, setFriendsDataLoading] = useState(true)
+
+  const pageLoading = trendingLoading || upcomingLoading || friendsLoading;
 
   const { currentUser } = useAuth();
 
@@ -49,20 +57,31 @@ export default function Home() {
 
   useEffect(() => {
     const handleGettingFriends = async () => {
+     try { 
       const friends = await getFriends(currentUser?.uid);
       setFriendsData(friends);
+    } catch(error){
+        console.log(error.message)
+    } finally{
+      setFriendsDataLoading(false)
+    }
     };
     handleGettingFriends();
   }, [currentUser.uid]);
 
   useEffect(() => {
-    if (friendsData.length === 0) {
-      setFriendsFavoriteMovies([]);
-      return;
+    if(friendsDataLoading){
+      return
     }
 
+    if (friendsData.length === 0) {
+      setFriendsFavoriteMovies([]);
+      setFriendsLoading(false)
+      return;
+    }
     const getFriendsFavoriteMovieArray = async () => {
-      const array = await getFriendsFavorites(friendsData);
+      try{
+        const array = await getFriendsFavorites(friendsData);
       const combinedArray = array.flat();
       const movieCounts = combinedArray.reduce((counts, movie) => {
         if (counts[movie.id]) {
@@ -81,24 +100,42 @@ export default function Home() {
           .slice(0, 3);
         setFriendsFavoriteMovies(friendsFavoriteMoviesArray);
       }
-    };
+    } catch(error){
+      console.log(error.message)
+    } finally{
+      setFriendsLoading(false);
+    }
+      }   
     getFriendsFavoriteMovieArray();
+
   }, [friendsData]);
 
   //   Get trending movie data
   useEffect(() => {
     const fetchData = async () => {
-      const trendingMoviesData = await getTrendingMovies();
-      setTrendingMovies(trendingMoviesData);
-    };
+      try{
+        const trendingMoviesData = await getTrendingMovies();
+        setTrendingMovies(trendingMoviesData);
+      }catch(error){
+        console.log(error.message)
+      } finally{
+        setTrendingLoading(false)
+      }
+        }
     fetchData();
   }, []);
 
   // get upcoming movie data
   useEffect(() => {
     const fetchData = async () => {
-      const upcomingMoviesData = await getUpcomingMovies();
-      setUpcomingMovies(upcomingMoviesData);
+      try{
+        const upcomingMoviesData = await getUpcomingMovies();
+        setUpcomingMovies(upcomingMoviesData);
+      } catch(error){
+        console.log(error.message)
+      }finally{
+        setUpcomingLoading(false)
+      }
     };
     fetchData();
   }, []);
@@ -125,7 +162,7 @@ export default function Home() {
   }
 
   return (
-    <main>
+     pageLoading ? <HomeLoading /> : <main>
       <section className="relative">
         <form className="relative w-full mt-6 px-2">
           <input
@@ -288,7 +325,7 @@ export default function Home() {
             </div>
           )}
         </div>
-      </div>
+      </div>  
     </main>
-  );
+  )
 }
