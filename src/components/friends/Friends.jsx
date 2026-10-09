@@ -41,6 +41,13 @@ export default function Friends() {
     await acceptFriendRequest(currentUser.uid, userId);
   }
 
+  function openShowFriendsModal() {
+    setShowFriendsModal(true);
+  }
+  function closeShowFriendsModal() {
+    setShowFriendsModal(false);
+  }
+
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (friendInputValue.length >= 2) {
@@ -212,7 +219,7 @@ export default function Friends() {
               <div
                 key={friend.id}
                 onClick={() => navigate(`/users/${friend?.id}`)}
-                className="relative flex items-center gap-4 py-2 cursor-pointer"
+                className="relative flex items-center gap-4 px-2 py-2 cursor-pointer"
               >
                 <div>
                   <img
@@ -235,11 +242,18 @@ export default function Friends() {
           })}
         </div>
         <div className="mt-4 float-end">
-          <button className="bg-[var(--accent)] py-1 px-2 rounded-sm cursor-pointer active:scale-95">
+          <button
+            onClick={openShowFriendsModal}
+            className="bg-[var(--accent)] py-1 px-2 rounded-sm cursor-pointer active:scale-95"
+          >
             Show All
           </button>
         </div>
-        {showFriendsModal && <ShowFriendsModal/>}
+        <ShowFriendsModal
+          friendsData={friendsData}
+          showFriendsModal={showFriendsModal}
+          closeShowFriendsModal={closeShowFriendsModal}
+        />
       </section>
     </main>
   );
