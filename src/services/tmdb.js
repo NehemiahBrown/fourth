@@ -104,7 +104,7 @@ export async function getMovieDetails(movieId) {
     id: movie.id,
     title: movie.title,
     overview: movie.overview,
-    trailerKey: trailer?.key,
+    trailerKey: trailer?.key ?? null,
     backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
     poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
     genres: movie.genres

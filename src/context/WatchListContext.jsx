@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { Timestamp } from "firebase/firestore";
 import { getMovieWatchListDocs } from "../services/firestore";
 import { useAuth } from "./AuthContext.jsx";
 
@@ -33,7 +34,13 @@ export function WatchListProvider({ children }) {
     });
 
     if (!alreadyAdded) {
-      setWatchListMovies((current) => [...current, movie]);
+      setWatchListMovies((current) => [
+        ...current,
+        {
+          ...movie,
+          addedAt: Timestamp.now(),
+        },
+      ]);
     }
   }
 
