@@ -3,16 +3,17 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import FourthIcon from "../../assets/fourthicon.png";
-``;
+import WatchlistLoading from "../loading/WatchlistLoading.jsx"
 
 export default function WatchList() {
-  const { watchListMovies, removeFromWatchList, addToWatchList } =
+  const { watchListMovies, watchlistLoading, removeFromWatchList, addToWatchList } =
     useWatchList();
 
   const [movieGenre, setMovieGenre] = useState("All");
   const [rowsShown, setRowsShown] = useState(2);
   const [columnsShown, setColumnsShown] = useState(2);
   const [sortOption, setSortOption] = useState("default");
+  const [pageLoading, setPageLoading] = useState(true);
 
   const filteredMovies =
     movieGenre === "All"
@@ -125,8 +126,7 @@ export default function WatchList() {
   }
   const sortedMovies = sortMovies();
   return (
-    <>
-      <section className="flex flex-col flex-1">
+      watchlistLoading ? <WatchlistLoading /> : <main className="flex flex-col flex-1">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold text-[var(--accent)]">Watchlist</h1>
           <div className="flex justify-between items-center">
@@ -295,7 +295,6 @@ export default function WatchList() {
             </div>
           )}
         </div>
-      </section>
-    </>
+      </main>
   );
 }

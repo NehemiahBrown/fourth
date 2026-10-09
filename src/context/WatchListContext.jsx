@@ -4,7 +4,6 @@ import { getMovieWatchListDocs } from "../services/firestore";
 import { useAuth } from "./AuthContext.jsx";
 
 export const WatchListContext = createContext();
-
 export function useWatchList() {
   return useContext(WatchListContext);
 }
@@ -13,16 +12,23 @@ export function WatchListProvider({ children }) {
   const { currentUser } = useAuth();
 
   const [watchListMovies, setWatchListMovies] = useState([]);
+  const [watchListLoading, setWatchListLoading] = useState(true)
+
 
   useEffect(() => {
     async function fetchWatchListMovies() {
-      if (currentUser) {
+      try { 
+        if (currentUser) {
         const usersWatchListMovies = await getMovieWatchListDocs(
           currentUser.uid,
         );
         setWatchListMovies(usersWatchListMovies);
       } else {
         setWatchListMovies([]);
+      }}catch(error){
+        console.log(error.message)
+      }finally{
+        setWatchListLoading(false)
       }
     }
     fetchWatchListMovies();
@@ -52,6 +58,7 @@ export function WatchListProvider({ children }) {
 
   const watchListData = {
     watchListMovies,
+    watchListLoading,
     removeFromWatchList,
     addToWatchList,
   };
