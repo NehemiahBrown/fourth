@@ -4,10 +4,12 @@ export default function HomeLoading(){
     return (
         <main className="animate-pulse">
           <section>
-            <div className="relative w-full mt-6 px-2 h-[35px]"></div>
-              <div className="absolute left-1/2 -translate-x-1/2 top-12 z-100 flex flex-col gap-2 bg-[var(--surface)] w-[98%] mx-auto py-1 px-2 max-h-[300px] md:max-h-[400px] overflow-y-scroll rounded-sm">
-                <div className="w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] md:w-[80px] md:h-[80px]"></div>
-              </div>
+          <div className="animate-pulse relative w-full mt-6 h-[35px] w-full pl-[8px] bg-[var(--surface)] border border-white/5 border-b-white/15 shadow-[var(--shadow-input)] rounded-md">
+              <Search
+                size={20}
+                className="absolute -translate-y-1/2 top-[50%] right-[15px]"
+              />
+            </div>
           </section>
 
           <div className="flex flex-col gap-6 mt-6">
@@ -20,6 +22,9 @@ export default function HomeLoading(){
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
+                    <div className="hidden sm:block w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
+                    <div className="hidden sm:block w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
+
                 </div>
             </div>
         </div>
@@ -34,6 +39,8 @@ export default function HomeLoading(){
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
+                    <div className="hidden sm:block w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
+                    <div className="hidden sm:block w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                 </div>
             </div>
         </div>
@@ -48,6 +55,8 @@ export default function HomeLoading(){
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                     <div className="w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
+                    <div className="hidden sm:block w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
+                    <div className="hidden sm:block w-[9rem] md:w-[10rem] lg:w-[11rem] aspect-[2/3] bg-[var(--loading-background)] border border-white/15 object-cover hover:border-[var(--accent-dark)] hover:border-2 cursor-pointer transition-all duration-100"></div>
                 </div>
             </div>
         </div>

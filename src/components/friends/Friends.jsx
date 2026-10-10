@@ -24,12 +24,19 @@ export default function Friends() {
 
   const [friendInputValue, setFriendInputValue] = useState("");
   const [friendSearchResults, setFriendSearchResults] = useState([]);
-  const [friendRequests, setFriendRequests] = useState([]);
+
+  const [friendRequests, setFriendRequests] = useState();
   const [friendRequestUsers, setFriendRequestUsers] = useState([]);
-  const [friends, setFriends] = useState([]);
+  const [friends, setFriends] = useState();
   const [friendsData, setFriendsData] = useState([]);
+
   const [showFriendsModal, setShowFriendsModal] = useState(false);
+
+  const [requestsLoading, setRequestsLoading] = useState(true);
   const [friendsLoading, setFriendsLoading] = useState(true);
+
+  const pageLoading = friendsLoading || requestsLoading;
+  
 
   function captureFriendInputValue(e) {
     setFriendInputValue(e.target.value);
@@ -80,18 +87,67 @@ export default function Friends() {
 
   // function to get friend requests data for UI rendering
   useEffect(() => {
+      if(!friendRequests){
+        return
+      }
+    let ignoreUpdate = false;
+
     const fetchFriendRequestUsers = async () => {
-      const users = await Promise.all(
+      try{
+        const users = await Promise.all(
         friendRequests.map((requests) => {
           return getUserDocument(requests.senderId);
         }),
       );
-      setFriendRequestUsers(users);
-    };
+      if(ignoreUpdate === false){
+        setFriendRequestUsers(users);
+      }
+    }catch(error){
+      console.log(error.message)
+    }finally{
+      if(ignoreUpdate === false){
+        setRequestsLoading(false)
+      }
+    }
+  };
     fetchFriendRequestUsers();
+    return () => {
+      ignoreUpdate = true;
+    }
   }, [friendRequests]);
 
-  // Listener for new friends
+  // function to get friend data for UI rendering
+  useEffect(() => {
+    if(!friends){
+      return
+    }
+    //Variable to protect race condition
+    let ignoreUpdate = false;
+    const fetchFriends = async () => {
+      try {
+        const allFriends = await Promise.all(
+        friends.map((friend) => {
+          return getUserDocument(friend.id);
+        }),
+      )
+      if(ignoreUpdate === false){
+        setFriendsData(allFriends);
+      }
+    }catch(error){
+      console.log(error.message)
+    } finally {
+      if(ignoreUpdate === false){
+      setFriendsLoading(false)
+      }
+    }
+  }
+    fetchFriends();
+    return () => {
+      ignoreUpdate = true;
+    }
+  }, [friends]);
+
+   // Listener for new friends
   useEffect(() => {
     if (!currentUser?.uid) {
       return;
@@ -100,21 +156,8 @@ export default function Friends() {
     return unsubscribe;
   }, [currentUser?.uid]);
 
-  // function to get friend data for UI rendering
-  useEffect(() => {
-    const fetchFriends = async () => {
-      const allFriends = await Promise.all(
-        friends.map((friend) => {
-          return getUserDocument(friend.id);
-        }),
-      );
-      setFriendsData(allFriends);
-    };
-    fetchFriends();
-  }, [friends]);
-
   return (
-   friendsLoading ? <FriendsLoading/> : <main>
+   pageLoading ? <FriendsLoading/> : <main>
       <section className="flex flex-col mx-auto w-[98%]">
         <div>
           <h1 className="text-3xl font-bold text-[var(--accent)]">Friends</h1>
@@ -164,7 +207,7 @@ export default function Friends() {
       <section className="mt-4">
         <div className="flex justify-between items-center">
           <p className="text-xl font-bold">Friend Requests</p>
-          <p>{friendRequestUsers.length}</p>
+          <p>{friendRequestUsers?.length}</p>
         </div>
         <hr className="mt-2" />
         <div className="py-6">
@@ -212,7 +255,7 @@ export default function Friends() {
       <section>
         <div className="flex items-center justify-between">
           <p className="text-xl font-bold">Friends</p>
-          <p>{friends.length}</p>
+          <p>{friends?.length}</p>
         </div>
         <hr className="mt-2" />
         <div className="flex flex-col gap-4 py-6">

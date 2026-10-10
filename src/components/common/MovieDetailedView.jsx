@@ -148,18 +148,18 @@ export default function MovieDetailedView() {
 
   return (
     <main className="min-h-dvh">
-      <div className="-mx-4 -mt-4 relative ">
+      <div className="-mx-4 -mt-4 relative aspect-video">
         <div
           onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 bg-[var(--surface)] p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"
+          className="absolute top-4 left-4 bg-[var(--surface)] z-1000 p-2 text-[var(--accent)] backdrop-blur shadow-lg shadow-black/40 hover:bg-[var(--surface)]/80 rounded-full cursor-pointer"
         >
-          <ChevronLeft size={30} />
+          <ChevronLeft size={30}/>
         </div>
 
         <img
           src={movieDetails?.backdrop}
-          alt={`${movieDetails?.title} backdrop.`}
-          className=" w-full"
+          alt={`${movieDetails?.title}`}
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-b from-transparent via-[var(--background)]/80 to-[var(--background)]"></div>
         <div className="absolute bottom-0 max-w-[75%] px-4 pb-2">
