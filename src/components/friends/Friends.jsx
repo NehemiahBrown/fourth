@@ -1,5 +1,6 @@
 import { Search, ChevronRight } from "lucide-react";
 import ShowFriendsModal from "../modals/ShowFriendsModal.jsx";
+import FriendsLoading from "../loading/FriendsLoading.jsx";
 
 import {
   findAFriend,
@@ -28,6 +29,7 @@ export default function Friends() {
   const [friends, setFriends] = useState([]);
   const [friendsData, setFriendsData] = useState([]);
   const [showFriendsModal, setShowFriendsModal] = useState(false);
+  const [friendsLoading, setFriendsLoading] = useState(true);
 
   function captureFriendInputValue(e) {
     setFriendInputValue(e.target.value);
@@ -112,7 +114,7 @@ export default function Friends() {
   }, [friends]);
 
   return (
-    <main>
+   friendsLoading ? <FriendsLoading/> : <main>
       <section className="flex flex-col mx-auto w-[98%]">
         <div>
           <h1 className="text-3xl font-bold text-[var(--accent)]">Friends</h1>
