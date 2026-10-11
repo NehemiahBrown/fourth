@@ -26,13 +26,13 @@ export default function ShowFriendsModal({
             All Friends
           </h1>
           <hr />
-          <div className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             {friendsData.map((friend) => {
               return (
                 <div
                   onClick={() => navigate(`/users/${friend?.id}`)}
                   key={friend?.id}
-                  className="relative flex items-center gap-4 py-2 cursor-pointer"
+                  className="relative flex items-center gap-4 p-2 rounded-sm bg-[var(--surface)] cursor-pointer"
                 >
                   <div>
                     <img
@@ -44,7 +44,7 @@ export default function ShowFriendsModal({
                   <div>
                     <p className="text-lg">{friend?.fullName}</p>
                     <p className="text-[var(--primary-text)]/80">
-                      {friend?.userName}
+                      {`@${friend?.userName}`}
                     </p>
                   </div>
                 </div>

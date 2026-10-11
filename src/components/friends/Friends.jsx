@@ -195,7 +195,7 @@ export default function Friends() {
                       alt={friend?.userName + " profile picture."}
                     />
                     <p className="text-[var(--secondary-text)]">
-                      {friend?.userName}
+                      {`@${friend?.userName}`}
                     </p>
                   </div>
                 </div>
@@ -258,13 +258,13 @@ export default function Friends() {
           <p>{friends?.length}</p>
         </div>
         <hr className="mt-2" />
-        <div className="flex flex-col gap-4 py-6">
-          {friendsData.slice(0, 4).map((friend) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
+          {friendsData.slice(0, 6).map((friend, index) => {
             return (
               <div
                 key={friend.id}
                 onClick={() => navigate(`/users/${friend?.id}`)}
-                className="relative flex items-center gap-4 px-2 py-2 cursor-pointer"
+                className={`${index >= 3 ? "hidden" : ""} md:flex relative bg-[var(--surface)] flex items-center gap-4 p-2 rounded-sm cursor-pointer`}
               >
                 <div>
                   <img
@@ -276,7 +276,7 @@ export default function Friends() {
                 <div>
                   <p className="text-lg">{friend?.fullName}</p>
                   <p className="text-[var(--primary-text)]/80">
-                    {friend?.userName}
+                    {`@${friend?.userName}`}
                   </p>
                 </div>
                 <div className="absolute bottom-1 right-2">

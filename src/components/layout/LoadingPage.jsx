@@ -21,7 +21,7 @@ export default function LoadingPage(){
     return (
         <main className="flex justify-center items-center h-screen">
             <div className="flex flex-col justify-center items-center gap-4">
-                <img className="animate-bounce w-[200px] md:w-[400px]" src={FourthLogo} alt="Fourth logo." />
+                <img className="animate-bounce w-[200px]" src={FourthLogo} alt="Fourth logo." />
                 <p className="text-4xl">Loading {dots}</p>
             </div>
         </main>
